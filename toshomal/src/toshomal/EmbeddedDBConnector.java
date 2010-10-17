@@ -283,32 +283,32 @@ public class EmbeddedDBConnector
                 for (String aTaglist : taglist) {
                     updateFileTags(file_id, aTaglist);
                 }
-            }
-            Matcher m_batch = Pattern.compile("(\\d+)-(\\d+)").matcher(fname.getEps());
-            if(m_batch.find())
-            {
-                int start = Integer.parseInt(m_batch.group(1));
-                int end = Integer.parseInt(m_batch.group(2));
-                int sub = Integer.parseInt(fname.getSub());
-
-                for (int i = start; i <= end; ++i)
+                Matcher m_batch = Pattern.compile("(\\d+)-(\\d+)").matcher(fname.getEps());
+                if(m_batch.find())
                 {
-                    int eps_id = getEpsId(show_id, i, sub);
+                    int start = Integer.parseInt(m_batch.group(1));
+                    int end = Integer.parseInt(m_batch.group(2));
+                    int sub = Integer.parseInt(fname.getSub());
+
+                    for (int i = start; i <= end; ++i)
+                    {
+                        int eps_id = getEpsId(show_id, i, sub);
+                        if (eps_id == -1)
+                        {
+                            eps_id = insertNewEps(show_id, i, sub);
+                        }
+                        updateFileEps(file_id, eps_id);
+                    }
+                }
+                else
+                {
+                    int eps_id = getEpsId(show_id, Integer.parseInt(fname.getEps()), Integer.parseInt(fname.getSub()));
                     if (eps_id == -1)
                     {
-                        eps_id = insertNewEps(show_id, i, sub);
+                        eps_id = insertNewEps(show_id, Integer.parseInt(fname.getEps()), Integer.parseInt(fname.getSub()));
                     }
                     updateFileEps(file_id, eps_id);
                 }
-            }
-            else
-            {
-                int eps_id = getEpsId(show_id, Integer.parseInt(fname.getEps()), Integer.parseInt(fname.getSub()));
-                if (eps_id == -1)
-                {
-                    eps_id = insertNewEps(show_id, Integer.parseInt(fname.getEps()), Integer.parseInt(fname.getSub()));
-                }
-                updateFileEps(file_id, eps_id);
             }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -404,6 +404,28 @@ public class EmbeddedDBConnector
             if (rs.next())
             {
                 result = new DbShow(rs);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return null;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
+    public ArrayList<DbEps> getShowEps(DbShow show)
+    {
+        String query = "select * from eps where id_show = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        ArrayList<DbEps> result = null;
+        try {
+            stmt.setInt(1, show.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                result.add(new DbEps(rs));
             }
             rs.close();
         } catch (SQLException e) {

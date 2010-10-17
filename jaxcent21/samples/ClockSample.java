@@ -36,12 +36,12 @@ public class ClockSample extends jaxcent.JaxcentPage {
     ArrayList<DbFile> dbFiles;
 
     static String[][] tdArgs = {
-            { "class", "valign", "width" },
-            { "style", "class", "valign" }
+            { "class", "valign", "width" , "id"},
+            { "style", "class", "valign", "id" }
     };
-    static String[][] tdVals = {
-            { "borderClass", "top", "53" },
-            { "padding-left: 0pt;", "borderClass", "top" }
+    String[][] tdVals = {
+            { "borderClass", "top", "53", "simg" },
+            { "padding-left: 0pt;", "borderClass", "top", "sdesc" }
     };
 
     // Start the thread in the page constructor.
@@ -68,8 +68,10 @@ public class ClockSample extends jaxcent.JaxcentPage {
             String image = buildImg(show);
             String desc = buildDesc(file, show);
             try {
+                tdVals[0][3] = String.format("simg%d", show.getId());
+                tdVals[1][3] = String.format("sdesc%d", show.getId());
                 table.insertRow(
-                        -1,
+                        0,
                         new String[] {
                                 "<div class=\"picSurround\">" + image + "</div>",
                                 desc
@@ -137,8 +139,10 @@ public class ClockSample extends jaxcent.JaxcentPage {
                     DbShow show = db.getShow(file);
                     String image = buildImg(show);
                     String desc = buildDesc(file, show);
+                    tdVals[0][3] = String.format("simg%d", show.getId());
+                    tdVals[1][3] = String.format("sdesc%d", show.getId());
                     table.insertRow(
-                            -1,
+                            0,
                             new String[] {
                                     "<div class=\"picSurround\">" + image + "</div>",
                                     desc
