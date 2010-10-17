@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<TITLE>Chat Sample</TITLE>
+<SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js"></SCRIPT>
+</HEAD>
+<BODY>
+This sample shows a simple chat program, using the Jaxcent "simple publish and subscribe"
+model with the JaxcentTopic class.
+<P>
+<DIV ID="messageDiv" style="height:322px;overflow:scroll;">
+<TABLE ID="messageList" BORDER=2 WIDTH=99%>
+</TABLE>
+</DIV>
+<P>
+<TABLE>
+
+<!-- We have to separate the "name" out in its own form, because
+     in order to have ENTER submit the form, we need to
+     have only one text field in the next form. The Jaxcent
+     code doesn't care which form contains what! -->
+
+<FORM>
+<TR>
+    <TD>Your Name</TD>
+    <TD><INPUT ID="name" TYPE=TEXT SIZE=20></TD>
+</TR>
+</FORM>
+<FORM onSubmit="return false;" id="sendForm">
+<TR>
+     <TD>Message</TD>
+     <TD><INPUT ID="message" TYPE=TEXT SIZE=80></TD>
+</TR>
+<TR>
+     <TD><INPUT TYPE=SUBMIT VALUE="Send"></TD>
+     <TD>&nbsp;</TD>
+</TR>
+</FORM>
+</TABLE>
+<P>
+</BODY>
+</HTML>

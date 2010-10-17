@@ -1,0 +1,33 @@
+<HTML>
+<HEAD>
+<TITLE>Clock Image Sample</TITLE>
+<SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js"></SCRIPT>
+</HEAD>
+<BODY>
+This sample is similar to the Clock Sample, but the clock is
+displayed using images instead of text.
+<P>
+The location for the images has been
+reserved in the HTML below, and marked with ID attributes.
+<P>
+If you do not see the images below, the JPG files for this sample need to
+be put on the web server in "images" folder!
+<P>
+<HR>
+<P>
+The time at the server is now:
+<P>
+<IMG ID=hh1 SRC=images/0.jpg><IMG ID=hh2 SRC=images/0.jpg><IMG src=images/sep.jpg><IMG ID=mm1 SRC=images/0.jpg><IMG ID=mm2 SRC=images/0.jpg><IMG src=images/sep.jpg><IMG ID=ss1 SRC=images/0.jpg><IMG ID=ss2 SRC=images/0.jpg>
+<P>
+<HR>
+The Java processing here is similar to the Clock Sample, except the
+thread that does the time updating.  Instead of writing
+text into a para, it updates the image source for
+the images.
+<P>
+Also in this sample, the clock updating starts on a button
+click event, instead of in the onLoad method.
+<FORM>
+<INPUT ID=startClock TYPE=BUTTON NAME="Start" VALUE="Start Clock">
+</FORM>
+</BODY></HTML>

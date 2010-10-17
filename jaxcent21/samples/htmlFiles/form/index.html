@@ -1,0 +1,71 @@
+Available Pages
+<UL>
+<LI><A HREF=ShoppingCart.html>Shopping Cart Page</A>
+<LI><A HREF=NameAddress.html>Name and Address Page</A>
+<LI><A HREF=ShippingAddress.html>Shipping Address Page</A>
+<LI><A HREF=Payment.html>Payment Page</A>
+<LI><A HREF=Summary.html>Summary Page</A>
+</UL>
+<HR>
+<P>
+This sample shows the ability of Jaxcent to maintain FORM data automatically.
+<P>
+The form data is stored in the "session" object.  To reclaim server memory
+from inactive pages, the data is lost after a session timeout, i.e. if
+end user has not done any activity for a certain period of time.
+In typical Java servers (and also in Jaxcent connectors), the
+default session timeout is of the order of 10 minutes.
+<P>
+You can start from the <A HREF=ShoppingCart.html>Shopping Cart page</A> and
+go sequentially, or visit pages randomly.  The shopping cart has code
+behind it -- any other form data (name, address, etc) you enter will be
+automatically saved, and when you revisit the page, will be restored.  This
+requires no additional coding.
+<P>
+For the purpose of this demonstration, normal data checking
+(e.g. prompting the user if fields are empty) has not been
+added to the pages.  Data checking is only done at the summary page.
+<P>
+Note that the navigation mostly uses normal A HREF links.  Buttons are not required,
+though still can be used as on the summary page.
+<P>
+The Shopping Cart, Shipping Address, Summary and Results page haves Java code associated
+with them.  The other two pages list <tt>jaxcent.JaxcentPage</TT> directly
+as the page handler.  All pages have <tt>AutoSessionData</TT> set to
+<tt>true</tt>, which enables the automatic data handling.
+An extract from the config file is shown below.
+<PRE>
+ &lt;Page>
+    &lt;PagePath>/form/ShoppingCart.html&lt;/PagePath>
+    &lt;PageClass>sample.form.ShoppingCart&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/form/NameAddress.html&lt;/PagePath>
+    &lt;PageClass>jaxcent.JaxcentPage&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/form/ShippingAddress.html&lt;/PagePath>
+    &lt;PageClass>sample.form.ShippingAddress&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/form/Payment.html&lt;/PagePath>
+    &lt;PageClass>jaxcent.JaxcentPage&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/form/Summary.html&lt;/PagePath>
+    &lt;PageClass>sample.form.Summary&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/form/Results.html&lt;/PagePath>
+    &lt;PageClass>sample.form.Results&lt;/PageClass>
+    &lt;AutoSessionData>true&lt;/AutoSessionData>
+ &lt;/Page>
+</PRE>
+<HR>
+<P>
+<A HREF=ShoppingCart.html>Start at shopping cart</A>
