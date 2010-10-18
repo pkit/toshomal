@@ -23,11 +23,9 @@ public class BackendInstance extends Thread {
     ToshoReader reader;
     Date lastUpdate;
 
-    public BackendInstance(ToshomalMessage beMessage, ToshomalMessage feMessage)
+    public BackendInstance()
     {
         this.logline =  "Backend running...";
-        this.beMsg = beMessage;
-        this.feMsg = feMessage;
         this.reader = new ToshoReader();
         this.lastUpdate = new Date(0);
     }

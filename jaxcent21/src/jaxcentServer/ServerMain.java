@@ -75,21 +75,10 @@ public class ServerMain extends Thread {
         System.out.println( "  HTML Root: " + htmlRoot.getAbsolutePath());
         bRun = true;
         try {
-            ToshomalMessage femsg = new ToshomalMessage(500);
-            ToshomalMessage bemsg = new ToshomalMessage(500);
-            new BackendInstance(bemsg, femsg).start();
+            new BackendInstance().start();
             while ( bRun ) {
                 Socket s = serverSocket.accept();
                 new ServerInstance( s, htmlRoot, jaxcent ).start();
-                if(femsg.put("Frontend Data"))
-                { System.out.println("Successfully sent to backend"); }
-                else
-                { System.out.println("Failed to send to backend, will try later"); }
-                String msg = bemsg.take();
-                if(msg != null)
-                { System.out.println("Got message from backend: " + msg); }
-                else
-                { System.out.println("Failed to get message from backend, will try later"); }
             }
         } catch (Exception ex) {
             if ( bRun ) {
