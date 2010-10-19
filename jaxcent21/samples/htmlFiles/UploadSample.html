@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript">
+
+// Progress bar functions.
+
+// Initialize and display the progress bar.
+
+function progressBarInit()
+{
+    var progressbar = document.getElementById( "progressBar" );
+    var progressCell = document.getElementById( "progressCell" );
+    var progressFiller =  document.getElementById( "progressFiller" );
+    var caption = document.getElementById( "progressCaption" );
+    progressBar.style.display = "block";
+    caption.innerHTML = "0%";
+    progressCell.style.display = "none";
+}
+
+// Set the progress bar at a given percentage.
+
+function progressBarSet( percent )
+{
+    var progressbar = document.getElementById( "progressBar" );
+    var progressCell = document.getElementById( "progressCell" );
+    var progressFiller =  document.getElementById( "progressFiller" );
+    var caption = document.getElementById( "progressCaption" );
+    progressBar.setAttribute( "display", "block" );
+    var percentage = percent + "%";
+    var remaining = ( 100 - percent ) + "%";
+    caption.innerHTML = percentage;
+    var percentWidth = percent * 400 / 100;
+    var remainingWidth = 400 - percentWidth;
+    if ( percent <= 0 ) {
+        progressCell.style.display = "none";
+    } else {
+        progressCell.style.display = "block";
+        progressCell.width = percentWidth;
+    }
+    if ( percent >= 100 ) {
+        progressFiller.style.display = "none";
+    } else {
+        progressFiller.style.display = "block";
+        progressFiller.width = remainingWidth;
+    }
+}
+
+// Hide the progress bar when done
+
+function progressBarDone()
+{
+    var progressbar = document.getElementById( "progressBar" );
+    var progressCell = document.getElementById( "progressCell" );
+    progressBar.style.display = "none";
+}
+
+</SCRIPT>
+</HEAD>
+<BODY>
+This sample demonstrates file upload using Jaxcent.
+<P>
+You can upload a JPEG image using the form below.  The image will be displayed below the form.
+<FORM ID=uploadForm>
+<P>Image Caption <INPUT type="text" name="description"><BR>
+Image File <INPUT type="file" name="imagefile" accept="image/jpeg"><BR>
+<INPUT type="submit" value="Upload"> <INPUT type="reset">
+</FORM>
+<TABLE ID=progressBar cellspacing=0 style="display: none; width: 410px; border-collapse: collapse;">
+<CAPTION ID=progressCaption>0%</CAPTION>
+<TR><TD ID=progressCell WIDTH=1% style="background-color: red; border: 2px solid lightblue;">&nbsp;</TD><TD WIDTH=99% ID=progressFiller style="background-color: lightyellow; border: 2px solid lightblue;">&nbsp;</TD></TR>
+</TABLE>
+<P>
+<IMG ID=uploadedImage src="images/PlaceHolder.jpeg"></IMG><BR>
+<H2 ID=imageDescription>&nbsp;</H2>
+</BODY>
+</HTML>

@@ -1,0 +1,360 @@
+<HTML>
+<BODY>
+<H2>Getting Started with Jaxcent</H2>
+<OL>
+<LI><A HREF=#samples>Running Jaxcent Samples</A>
+<LI><A HREF=#command>Running Jaxcent from the Command Line</A>
+<LI><A HREF=#ide>Running Jaxcent in an IDE</A>
+<LI><A HREF=#servlet>Configuring Jaxcent with a Web Server or a Java Application Server</A>
+<LI><A HREF=#config>Writing the Jaxcent Configuration XML File</A>
+<LI><A HREF=#jsinclude>Adding the JavaScript include statement</A>
+<LI><A HREF=#writing>Writing the Jaxcent implementation classes</A>
+<LI><A HREF=#Adding>Adding Jaxcent to existing applications</A>
+<LI><A HREF=#NewApps>Designing New Applications in Jaxcent</A>
+<LI><A HREF=#JavaScript>JavaScript and Jaxcent</A>
+<LI><A HREF=#Performance>Performance Considerations</A>
+<LI><A HREF=#FormSubmit>Form Submit Behavior</A>
+<LI><A HREF=#Virtual Host>Virtual Host configuration</A>
+<LI><A HREF=#Other>Other Documentation</A>
+</OL>
+<H3><A NAME=samples>Running Jaxcent Samples</H3>
+The samples folder contains a file <I>RunSamples</I> containing the command necessary to start the
+Jaxcent stand-alone web-server on the samples.  After running this command successfully,
+the samples may be viewed at http://localhost/
+<H3><A NAME=command>Running Jaxcent from the Command Line</H3>
+Jaxcent can be used with standard Web Servers and/or Java Application Servers.
+<P>
+Jaxcent also includes a small standalone web server, that can be started from the command line.
+To use this server, the files <CODE>jaxcentFramework21.jar</CODE> and <CODE>jaxcent21.jar</CODE>
+need to be in the classpath.
+<P>
+To start the server from the command line, the syntax is:
+<PRE>
+    java jaxcentServer.ServerMain &lt;port-number> &lt;HTML-root> &lt;XML-Config-file> &lt;Optional-Reloadable-classpath>
+</PRE>
+For instance,
+<PRE>
+    java jaxcentServer.ServerMain 80 C:\MyHtmlFiles C:\JaxcentConfig.xml
+</PRE>
+or
+<PRE>
+    java jaxcentServer.ServerMain 80 C:\MyHtmlFiles C:\JaxcentConfig.xml C:\MyJaxcentClasses
+</PRE>
+If the <TT>&lt;Optional-Reloadable-classpath></TT> is provided, Jaxcent will look in there for classes to load (in addition
+to the standard classpath), and will reload these classes whenever they change.  This can help during development.  (But
+should not be used if running within an IDE.)
+<H3><A NAME=ide>Running Jaxcent in an IDE</H3>
+The command line method outlined above, can also be used when running Jaxcent in an IDE.
+To use this method in an IDE:
+<UL>
+<LI>Make sure the IDE has Jaxcent21.jar and JaxcentFramework21.jar in the classpath.
+<LI>Specify the class <TT>jaxcentServer.ServerMain</TT> as the startup class.
+<LI>Provide the startup arguments as specified above:
+<OL>
+<LI>Port number (typically 80.)
+<LI>Location of HTML files
+<LI>Full path of XML configuration file.
+</OL>
+<LI>Start running or debugging using the IDE, then use a browser to visit the pages.
+</UL>
+<P>
+In addition, the Jaxcent server can also be started programmatically.  To do this, instantiate the class
+<CODE>jaxcentServer.ServerMain</CODE>.  This class extends <CODE>java.lang.Thread</CODE>.  After
+instantiating it, start the thread.  E.g.
+<PRE>
+    ServerMain jaxcentServer = new ServerMain( 80, htmlDir, xmlConfigFile, reloadableClasspath );
+    jaxcentServer.start();
+</PRE>
+The last parameter <CODE>reloadableClasspath</CODE> can be <CODE>null</CODE>.  In debugging,
+typically you may want to provide <CODE>null</CODE> here, and specify the full classpath in the IDE.
+<H3><A NAME=servlet>Using Jaxcent with Web Servers or Java Servlet Containers</A></H3>
+Jaxcent works with standard Java servlet containers (Java application servers) such as Tomcat.
+<P>
+It can also be configured to work directly with Microsoft IIS web-server, or the Apache web-server.
+<P>
+If using a Java servlet container, Apache or IIS, the file <TT>jaxcent21.js</tt> must be made available
+at the URL location.
+<PRE>
+    /jaxcent21.js
+</PRE>
+This URL location can be changed, but the HTML files must have the correct URL.
+<P>
+Also, the Jaxcent servlet (or connector) needs to be available at the URL location
+<PRE>
+    /servlet/JaxcentServlet21
+</PRE>
+This URL location can also be changed, and would require editing the <TT>jaxcent21.js</TT> file to specify the correct URL.
+<P>
+<P>
+Depending upon your environment, please visit the appropriate link
+below for configuring the Jaxcent servlet/connector.
+<UL>
+<LI><A target=_blank HREF=docs/GettingStartedServlet.html>Configuring Jaxcent with a Java servlet container (Java application server) such as Tomcat</A>
+<LI><A target=_blank HREF=docs/GettingStartedIIS.html>Configuring Jaxcent to work directly with Internet Information Services (IIS) web server.</A>
+<LI><A target=_blank HREF=docs/GettingStartedApache.html>Configuring Jaxcent to work directly with the Apache web server.</A>
+</UL>
+When the servlet, connector or Jaxcent web-server is correctly configured and running, visit the URL <A HREF=http://localhost/servlet/JaxcentServlet21>http://localhost/servlet/JaxcentServlet21</A>
+(changing the domain name as appropriate) in a browser, to make sure the servlet is working as expected.  (For IIS direct
+connector, visit <A HREF=http://localhost/scripts/JaxcentConnector21.dll>http://localhost/scripts/JaxcentConnector21.dll</A> instead.)
+<H3><A NAME=config>Writing the Jaxcent configuration file</A></H3>
+The Jaxcent configuration file is an XML file that maps incoming URLs to Jaxcent classes you write.  Whenever
+the configuration file is changed, by default Jaxcent will re-read it.  A sample configuration
+file is shown below.
+<PRE>
+&lt;JaxcentConfiguration>
+ &lt;Page>
+    &lt;PagePath>/clockSample.html&lt;/PagePath>
+    &lt;PageClass>sample.ClockSample&lt;/PageClass>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/clockImageSample.html&lt;/PagePath>
+    &lt;PageClass>sample.ClockImageSample&lt;/PageClass>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/WidgetsSample.html&lt;/PagePath>
+    &lt;PageClass>sample.WidgetsSample&lt;/PageClass>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/TableSample.html&lt;/PagePath>
+    &lt;PageClass>sample.TableSample&lt;/PageClass>
+ &lt;/Page>
+ &lt;Page>
+    &lt;PagePath>/ChatSample.html&lt;/PagePath>
+    &lt;PageClass>sample.ChatSample&lt;/PageClass>
+ &lt;/Page>
+&lt;/JaxcentConfiguration>
+</PRE>
+<H3><A NAME=jsinclude>Adding JavaScript include statement to the HTML content</A></H3>
+<H4>1. Publish Jaxcent21.js</H4>
+Make sure <tt>jaxcent21.js</tt> is
+available at your website!
+If <tt>jaxcent21.js</tt> is not available at the website, Jaxcent will not work!  If
+you are going via a Java servlet-container/application-server and have another web-server as the
+front end, the .js file will need to be placed at the content-root of the front
+end web-server.
+<P>
+If necessary, edit <tt>jaxcent21.js</tt> to provide the correct URL for the Jaxcent servlet/connector.
+<P>
+<B>Note:</B> This step is not applicable if you are using the Jaxcent
+Development Server, because jaxcent21.js is embedded in the server itself.
+<H4>2. Modify HTML Content</h4>
+Then add the statement
+<PRE>
+&lt;SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js">&lt;/SCRIPT>
+</PRE>
+in the &lt;HEAD> section of your HTML content, changing the path
+if necessary.
+<P>
+This change needs to be made to all HTML content that you want to
+handle with Jaxcent.  The HTML content itself can be
+coming from HTML, JSP, ASP, servlet, or other sources.  As long as
+the JavaScript file has been correctly included, the HTML will
+be available for access via the Jaxcent API.
+<H3><A NAME=writing>Writing the Jaxcent classes</A></H3>
+Now you are ready to write Jaxcent classes (<i>jaxlets</i>.)
+<P>
+The Jaxcent classes (<I>jaxlets</I>) you write must extend <TT>jaxcent.JaxcentPage</TT>, and
+can override various methods in there.  Typically, you can declare and
+initialize one or more fields corresponding to one or more HTML tags on
+the page.  You can access methods and properties of these HTML tags
+directly from your Jaxcent class.
+<P>
+Jaxcent has classes corresponding to various HTML tags.  The
+class <TT>jaxcent.HtmlElement</TT> is a catch-all class that you can use if
+you are not particular about using the exact matching class.
+<P>
+When you create an object of a class corresponding to an
+HTML tag, Jaxcent needs a way to locate the actual tag
+on the HTML page.  This is done by providing a "search"
+method.  The default (and recommended) search method
+is to search by the "ID" field.  This requires adding
+an ID attribute to the HTML field, and then specifying
+the same ID string to the corresponding Jaxcent object's constructor.
+<P>
+There are other methods of locating the HTML tags on the page, as well,
+such as searching by the tag or by NAME or by TYPE (applies to INPUT tags).
+<P>
+New elements can be created by using the <TT>createNew</TT> argument
+instead of a search-type.
+<P>
+If you are interested in receiving events from any of the objects
+you have created, simply override the event method.
+<P>
+The processing typically starts by overriding the <TT>onLoad</TT>
+method of <TT>jaxcent.JaxcentPage</TT> class, or from event
+handlers.  Before <tt>onLoad</TT> is called (in the constructor), data cannot be
+retrieved from the HTML page, because the page has not loaded yet.
+However, data can be sent out, and values of fields can be set in the constructor.
+These will get queued up, and will be processed when the page does get loaded.
+<P>
+The provided samples can be compiled, tested and reviewed for
+a good start.
+<H3><A NAME=Adding>Adding Jaxcent to existing applications</A></H3>
+Adding Jaxcent capabilities to existing applications is very simple.  The
+existing application can continue to work as always, and Jaxcent can
+be added piecemeal.  For any web page in the existing application that
+needs to be made more dynamic, simply add a URL mapping in the Jaxcent
+configuration file, and then add the Jaxcent JavaScript include to the page.
+That's it, the web page can now be handled by Jaxcent!
+<P>
+The rest of the web application's behavior can continue as it used to.
+<H3><A NAME=NewApps>Designing New Applications in Jaxcent</A></H3>
+If you are familiar with
+Java server-side programming, note that the <tt>session</tt>
+and <tt>application context</tt> are available in Jaxcent.  If you
+are not familiar with these, you may want to briefly read up
+on these, as they can help simplify the application development.
+<P>
+When designing new applications using Jaxcent, make sure to read
+about the configuration item "AutoSessionData".  If it is configured
+as true, Jaxcent will save the user's data entry in the session, and
+when new pages are loaded, will initialize them from the session.  When
+you are ready to process the user's data, you can also retrieve it from
+the session.  For data verification, <tt>jaxcent.JaxcentPage</tt> provides
+a convenient <TT>getAllFormData</TT> method.  Events can also be
+overridden to receive data along with the event.  Alternatively, various
+items can be checked one at a time.  In general, checking items one
+at a time will require many client-server round trips, so whenever reasonable,
+all the data should be retrieved together.
+<H3><A NAME=JavaScript>JavaScript and Jaxcent</A></H3>
+JavaScript can be added to Jaxcent pages without involving Jaxcent.
+<P>Jaxcent can also be easily integrated with JavaScript.
+<P>
+To call JavaScript functions from the Java code, use <CODE>execJavaScriptCode</CODE>
+or <CODE>evalJavaScriptCode</CODE> methods of the <CODE>JaxcentPage</CODE> class.
+<P>
+To call Java on
+the server from JavaScript, call <CODE>JaxcentServerRequest</CODE> in
+JavaScript, and override <CODE>onJavaScriptRequest</CODE> in the <CODE>JaxcentPage</CODE> class.
+<P>
+To add JavaScript verifiers that should be called before an event
+is sent to the server, call <CODE>addJavaScriptVerification</CODE> which
+is provided by the base <CODE>JaxcentObject</CODE> class.
+<P>
+For advanced JavaScript integration, sometimes it may be required
+to send a JavaScript <I>object</I> that is not a simple string or
+integer or boolean etc, to the server and to have the server send it back.  For
+this purpose, Jaxcent provides the following functions in JavaScript:
+<UL>
+<LI><CODE>JaxcentMakeObjectReference( obj )</CODE>  returns a reference
+to a JavaScript object, that can be passed as a string to the server and
+the server can pass it back.
+<LI>Call <CODE>JaxcentGetReferencedObject( ref )</CODE> to retrieve
+the original object from the reference.
+<LI>When finished, call <CODE>JaxcentRemoveObjectReference( ref )</CODE> to clear
+the reference.
+</UL>
+<B>Note:</B>  The three functions above are not normally required.  For
+an example of when they are required, see the "AutoSuggest" integration
+samples provided at the Jaxcent website.
+<H3><A NAME=Performance>Performance Considerations</A></H3>
+<UL>
+<LI>Scalability is not a significant concern in Jaxcent programming (compared
+to other alternatives.)  The application server's scalability/clustering model will work
+with Jaxcent.  The Jaxcent servlet itself is relatively small and fast, and
+the AJAX interaction model combined with Jaxcent's low-data-volume protocol,
+puts less burden on the server compared to traditional
+models.  Instead, performance considerations need to focus on responsiveness.  The
+primary focus is minimizing the number of client-server round trips.  The less
+round trips required for performing a task, the faster the
+user's perceived response will be.
+<P>
+<LI>
+Since most form data is liable to fit in a single internet packet, Jaxcent
+provides methods to retrieve form data along with the events.  For instance,
+when a button is clicked, the Jaxcent programmer can choose to handle
+it by overriding a method that supplies all the form data.  It may feel
+slightly counter-intuitive to retrieve <i>all</i> form data if you
+are only interested in one or two items.  But actually, retrieving
+all the form data with the click will provide better responsiveness, compared
+to retrieving one or two data items individually after the click!
+<P>Retrieving
+all form data with the event and responding to it with output
+requires only a single client-server round-trip, and
+typically would require only one internet packet coming in.  Getting
+an individual item would also require one internet packet, but doing
+it after the event means the event requires one packet, the request
+to get the item requires one packet (in the other direction), and
+the value of the item requires one more packet!
+<P>
+<LI>
+The page constructor is a good place for doing as much of the page
+output as possible.  At this point, the page is not loaded, therefore
+HTML input values cannnot be queried.  However, writing to the HTML
+tags (changing their properties etc) is quite possible.
+All output from the constructor is queued up and gets sent at once when the connection
+is established.  (Any settings done later may also get batched together,
+or may not, depending upon the network and server speed etc.)
+<P>
+<LI>Jaxcent attempts to batch multiple outputs in single transmissions.
+This can be programmatically improved in some cases by using the <TT>setBatchUpdates</tt>
+method.  The <TT>setBatchUpdates</tt> method can be useful in improving performance,
+but it needs to be used with care!  Generally, putting this in a <TT>try-finally</TT>
+block is a safe approach of using it.  It should not be mixed with user input, use
+it only when doing lots of output to the page.  Please note that when batching updates,
+the Java object is not actually communicating to the HTML page, until the batching
+updates is reset to false!  A couple of samples in the Jaxcent package
+have examples of calling <TT>setBatchUpdates</tt>.
+<P>
+<LI>
+Jaxcent makes it very easy to do all data verification from the server
+side -- even those parts of the data verification that could have been done
+entirely at the client side.  While not always a very significant consideration (the
+samples actually include examples of data verifications from the Jaxcent
+side instead of at the client), too much of this kind of verification
+can have an adverse effect on responsiveness.  Again, such verifications
+should retrieve the data along with the event to minimize the round trips.
+<P>
+<LI>
+Since it is very easy to start threads and have them interact with the page,
+it is also easy to have orphan threads that continue to operate after
+the page has unloaded!  This can drastically bring down server performance
+on high volume servers.  Jaxcent throws an <CODE>Error</CODE> on any output
+to the page after the page has unloaded.  This should normally have the
+effect of terminating the thread.  However, programmers should nor rely
+on this mechanism and should actively terminate the thread on unload.
+<P>
+<LI>The <CODE>ReloadableClassPath</CODE> is a convenient mechanism
+during development for having Java code changes take effect
+immediately.  But it does require additional processing
+to check class files for changes.  In production environments,
+the Jaxcent classes should be in system or app-server CLASSPATH,
+and not in the Jaxcent reloadable classpath, for best performance.
+</UL>
+<H3><A NAME=Virtual Host>Virtual Host configuration</H3>
+When used with the Jaxcent Apache connector or via a servlet container, virtual
+hosts can be configured with Jaxcent.
+<UL>
+<LI>With servlet containers, the configuration
+file can be bundled as a resource in the servlet (e.g. directly or as a part
+of a deployment archive.)  Multiple servlets can also be configured.  In this case,
+the Jaxcent21.js file can be modified to specify the various servlet URLs.
+<LI>With Apache, there can be only one JVM, therefore the main classpath, the
+log file and the JVM path can only be specified once.  But the other parameters
+can be specified using standard Apache virtual hosting configuration.
+</UL>
+<H3><A NAME=FormSubmit>Form Submit Behavior</H3>
+In general, submitting a form with an empty target will cause the page to refresh.
+This is usualy undesired behavior in Jaxcent, because the new page will get another
+new Jaxcent object assigned to it.  Usually this is not a problem, because
+most form submit actions cause a navigation to a new page.  But in Jaxcent programming,
+it is likely that many form submit actions will continue to work on the same page.
+Therefore, if the action of a form submit
+(or a button that causes a submit) is not navigation to a different page, the form
+submits should be disabled by adding onsubmit or onclick handlers that return false, e.g.
+<PRE>
+    &lt;FORM ID="myForm" onSubmit="return false;"&gt;
+</PRE>
+or
+<PRE>
+    &lt;BUTTON ID="myButton" onClick="return false;"&gt;A Button&lt;/BUTTON&gt;
+</PRE>
+<H3><A NAME=Other>Other Documentation</H3>
+Other documentation files:
+<UL>
+<LI><A HREF=docs/License.html>License</A>
+<LI><A HREF=docs/Config.html>Configuration Parameters</A>
+<LI><A HREF=javadoc/index.html>Javadoc Documentation of Jaxcent classes</A>
+</UL>
+</BODY>
+</HTML>

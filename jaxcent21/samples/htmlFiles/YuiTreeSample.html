@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>Jaxcent Sample for YUI (Yahoo User Interface) Trees</title>
+
+<!-- The required CSS and JavaScript files for Yahoo User Interface -->
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/fonts/fonts-min.css" />
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/2.6.0/build/calendar/assets/skins/sam/calendar.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/treeview/assets/skins/sam/treeview.css" />
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/calendar/calendar-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/treeview/treeview-min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://developer.yahoo.com/yui/examples/treeview//assets/css/folders/tree.css">
+
+<!-- The Jaxcent include -->
+
+<script type="text/javascript" src="/jaxcent21.js"></script>
+
+<script type="text/javascript">
+// We need some JavaScript code to handle click events on the tree.
+
+function yuiTreeClickHandler( oArgs )
+{
+     if ( oArgs.node.varname ) {
+         JaxcentServerRequest( "YuiTreeOnClick", oArgs.node.varname );
+     }
+     if ( oArgs.node.editable ) {
+         oArgs.node.editNode( oArgs.node.label );
+     }
+}
+</script>
+</head>
+
+<!-- Note:  A parent tag must have the class yui-skin-sam.  Body is the
+     best place to put this class, if calendar editor is to be used.
+ -->
+
+<body class="yui-skin-sam">
+
+<h1>Jaxcent Sample for YUI (Yahoo User Interface) Trees</h1>
+<TABLE>
+<TR><TD WIDTH=200>
+<!-- The follwing div is where the tree will be added.
+     It must have an ID, which is provided to the Java YuiTree class.
+ -->
+<div id="yuitree"></div>
+</TD>
+<TD>
+&nbsp;&nbsp;
+</TD>
+<TD VALIGN=top>
+The tree on the left has been created in Java,
+using <A HREF=http://developer.yahoo.com/yui/treeview/>Yahoo User Interface</A> via Jaxcent.  A Jaxcent
+Java wrapper has been created for the JavaScript
+interface to this tree, and the Jaxcent page that
+handles the HTML, derives from this Java wrapper.
+The JavaScript interface is encapsulated in
+the wrapper, the user of the wrapper need not
+be JavaScript-aware.
+<P>
+There are two types of nodes made available,
+Text and Date.  Either of these types of node can
+be made editable or non-editable.  The Java code
+starts off the tree with a node
+containing some editable nodes, and another node
+containing some non-editable nodes.  The Java code
+also handles the messages from the FORM below.  The FORM
+below can be used to insert new nodes, and expand/collapse
+existing nodes.  Nodes
+can also be collapsed/expanded by clicking on them directly.
+Editable nodes can be edited by clicking on them.
+</TD></TR>
+</TABLE>
+<P>
+<P ID="msgs">
+<P>
+To add new nodes, choose a node underneath which
+you would like to add a new node, select the type
+of the node (text-node or date-node), then
+click the Insert New Node button.
+Text-nodes also require
+some text to be entered for the new node (text
+can contain valid HTML markup.)
+You can also expand/collapse the node programmatically
+via Java by clicking the Expand/Collabse buttons below.
+<P>
+<FORM>
+<TABLE cellpadding=4>
+<TR>
+<TD VALIGN=TOP>
+  <TABLE>
+  <TR>
+  <TD>
+  Select tree-node for operations
+  </TD>
+  </TR>
+  <TR>
+  <TD>
+  <SELECT ID=nodesel>
+  <OPTION>&lt;Root&gt;
+  </SELECT>
+  </TD>
+  </TR>
+  <TR><TD>&nbsp;</TD></TR>
+  <TR><TD><B>Note:</B>  Operations (insert/expand etc) occur on the node
+     you select above, not on the node you clicked last!</TD></TR>
+  </TABLE>
+</TD>
+<TD WIDTH=100>&nbsp;</TD>
+<TD>
+  <TABLE>
+  <TR>
+  <TD colspan=2>Type of node to insert</TD>
+  <TD><SELECT ID="type"><OPTION>Text<OPTION>Date</SELECT></TD>
+  </TR>
+  <TR id="textrow">
+  <TD colspan=2>Text or Date (mm/dd/yyyy)</TD>
+  <TD><INPUT TYPE=TEXT ID="text" SIZE=20></TD>
+  </TR>
+  <TR>
+  <TD colspan=2>Make Editable</TD>
+  <TD><INPUT TYPE=CHECKBOX ID="editable"></TD>
+  </TR>
+  <TR>
+  <TD colspan=2>&nbsp;</TD>
+  <TD><INPUT TYPE=BUTTON ID="insert" VALUE="Insert New Node"></TD>
+  </TR>
+  <TR><TD>&nbsp;</TD></TR>
+  <TR><TD><INPUT TYPE=BUTTON ID="expand" VALUE="Expand"></TD>
+      <TD><INPUT TYPE=BUTTON ID="collapse" VALUE="Collapse"></TD></TR>
+  </TABLE>
+</TD>
+</TR>
+</TABLE>
+</FORM>
+</body>
+</html>

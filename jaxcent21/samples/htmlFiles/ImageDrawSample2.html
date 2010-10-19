@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<TITLE>Image Drawing Sample</TITLE>
+<SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js"></SCRIPT>
+</HEAD>
+<BODY>
+This sample shows how Java graphics features can be accessed in Jaxcent.
+It draws the locus of the equation
+<PRE>
+    X = R cos(n&#920;) cos(&#920;) 
+    Y = R cos(n&#920;) sin(&#920;) 
+</PRE>
+from the given input.
+<HR>
+Select some items, then click "Draw Picture" button to draw a picture.
+<P>
+<IMG id="image" src="images/PlaceHolder.jpeg">
+<FORM>
+<TABLE>
+<TR><TD>Radius (80 to 200)</TD><TD><INPUT TYPE=TEXT NAME="radius" VALUE=100 SIZE=4></TD>
+    <TD>N (2 to 20)</TD><TD><INPUT TYPE=TEXT NAME="N" VALUE=8 SIZE=4></TD></TR>
+<TR><TD>Background Color</TD>
+<TD><SELECT NAME="bgcolor">
+<OPTION VALUE="#FF0000">red</OPTION>
+<OPTION VALUE="#0000FF">blue</OPTION>
+<OPTION VALUE="#00FF00">green</OPTION>
+<OPTION VALUE="#00FFFF">cyan</OPTION>
+<OPTION VALUE="#FF00FF">magenta</OPTION>
+<OPTION VALUE="#FFFF00">yellow</OPTION>
+<OPTION VALUE="#FFC800">orange</OPTION>
+<OPTION VALUE="#FFAFAF">pink</OPTION>
+<OPTION VALUE="#FFFFFF" selected>white</OPTION>
+<OPTION VALUE="#000000">black</OPTION>
+<OPTION VALUE="#808080">gray</OPTION>
+<OPTION VALUE="#C0C0C0">lightgray</OPTION>
+<OPTION VALUE="#404040">darkgray</OPTION>
+</SELECT></TD>
+<TD>Foreground Color</TD>
+<TD><SELECT NAME="fgcolor">
+<OPTION VALUE="#FF0000">red</OPTION>
+<OPTION VALUE="#0000FF">blue</OPTION>
+<OPTION VALUE="#00FF00">green</OPTION>
+<OPTION VALUE="#00FFFF">cyan</OPTION>
+<OPTION VALUE="#FF00FF">magenta</OPTION>
+<OPTION VALUE="#FFFF00">yellow</OPTION>
+<OPTION VALUE="#FFC800">orange</OPTION>
+<OPTION VALUE="#FFAFAF">pink</OPTION>
+<OPTION VALUE="#FFFFFF">white</OPTION>
+<OPTION VALUE="#000000" selected>black</OPTION>
+<OPTION VALUE="#808080">gray</OPTION>
+<OPTION VALUE="#C0C0C0">lightgray</OPTION>
+<OPTION VALUE="#404040">darkgray</OPTION>
+</SELECT></TD></TR>
+</TABLE>
+</FORM>
+<BUTTON id="build">Draw Picture</BUTTON>
+</BODY>
+</HTML>

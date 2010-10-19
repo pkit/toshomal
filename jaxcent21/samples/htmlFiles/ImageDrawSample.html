@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+<TITLE>Image Drawing Sample</TITLE>
+<SCRIPT TYPE="text/javascript" SRC="/jaxcent21.js"></SCRIPT>
+</HEAD>
+<BODY>
+This sample shows how a JPEG image can be created on the fly and displayed in
+an HTML page.  This sample draws simple text from input, but obviously,
+the technique can be used for any kind of dynamic graphical image drawing.
+<HR>
+Select some items, then click "Draw Text" button.
+<P>
+<FORM>
+<TABLE>
+<TR><TD>Text to Draw</TD><TD COLSPAN=3><INPUT TYPE=TEXT NAME="text" SIZE=60></TD></TR>
+<TR><TD>Image Width (200 to 800)</TD><TD><INPUT TYPE=TEXT NAME="width" VALUE=400 SIZE=4></TD>
+    <TD>Image Height (80 to 200)</TD><TD><INPUT TYPE=TEXT NAME="height" VALUE=100 SIZE=4></TD></TR>
+<TR><TD>Background Color</TD>
+<TD><SELECT NAME="bgcolor">
+<OPTION VALUE="#FF0000">red</OPTION>
+<OPTION VALUE="#0000FF">blue</OPTION>
+<OPTION VALUE="#00FF00">green</OPTION>
+<OPTION VALUE="#00FFFF">cyan</OPTION>
+<OPTION VALUE="#FF00FF">magenta</OPTION>
+<OPTION VALUE="#FFFF00">yellow</OPTION>
+<OPTION VALUE="#FFC800">orange</OPTION>
+<OPTION VALUE="#FFAFAF">pink</OPTION>
+<OPTION VALUE="#FFFFFF">white</OPTION>
+<OPTION VALUE="#000000" selected>black</OPTION>
+<OPTION VALUE="#808080">gray</OPTION>
+<OPTION VALUE="#C0C0C0">lightgray</OPTION>
+<OPTION VALUE="#404040">darkgray</OPTION>
+</SELECT></TD>
+<TD>Text Color</TD>
+<TD><SELECT NAME="textcolor">
+<OPTION VALUE="#FF0000">red</OPTION>
+<OPTION VALUE="#0000FF">blue</OPTION>
+<OPTION VALUE="#00FF00">green</OPTION>
+<OPTION VALUE="#00FFFF">cyan</OPTION>
+<OPTION VALUE="#FF00FF">magenta</OPTION>
+<OPTION VALUE="#FFFF00">yellow</OPTION>
+<OPTION VALUE="#FFC800">orange</OPTION>
+<OPTION VALUE="#FFAFAF">pink</OPTION>
+<OPTION VALUE="#FFFFFF" selected>white</OPTION>
+<OPTION VALUE="#000000">black</OPTION>
+<OPTION VALUE="#808080">gray</OPTION>
+<OPTION VALUE="#C0C0C0">lightgray</OPTION>
+<OPTION VALUE="#404040">darkgray</OPTION>
+</SELECT></TD></TR>
+<TR><TD>Text Font</TD><TD><SELECT NAME="font">
+<OPTION>Arial</OPTION>
+<OPTION>Arial Black</OPTION>
+<OPTION>Bookman Old Style</OPTION>
+<OPTION>Century</OPTION>
+<OPTION>Century Gothic</OPTION>
+<OPTION>Courier New</OPTION>
+<OPTION>Georgia</OPTION>
+<OPTION>Impact</OPTION>
+<OPTION>Neuropol</OPTION>
+<OPTION>Sybil Green</OPTION>
+<OPTION>Times New Roman</OPTION>
+<OPTION>Verdana</OPTION>
+</SELECT></TD>
+<TD>Font Size (20 to 100)</TD><TD><INPUT TYPE=TEXT NAME="fontsize" VALUE=60 SIZE=4></TD></TR>
+<TR><TD>Bold</TD><TD><INPUT TYPE=CHECKBOX NAME="bold"></TD>
+    <TD>Italic</TD><TD><INPUT TYPE=CHECKBOX NAME="italic"></TD></TR>
+</TABLE>
+</FORM>
+<BUTTON id="build">Draw Text</BUTTON>
+<HR>
+<IMG id="image">
+</BODY>
+</HTML>

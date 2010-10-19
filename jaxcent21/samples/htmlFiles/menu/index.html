@@ -1,0 +1,193 @@
+<html>
+<head>
+	<title>Jaxcent integration with JavaScript Widgets</title>
+	<script language="JavaScript" src="menu.js"></script>
+	<script language="JavaScript" src="menu_items.js"></script>
+	<script language="JavaScript" src="menu_tpl.js"></script>
+	<link rel="stylesheet" href="menu.css">
+        <script language="JavaScript" src="/jaxcent21.js"></script>
+<style>
+<!--
+#slidemenubar, #slidemenubar2{
+position:absolute;
+border:1.5px solid black;
+background-color:#F2F2F2;
+layer-background-color:#F2F2F2;
+font:bold 12px Verdana;
+line-height:20px;
+}
+-->
+</style>
+</head>
+<body>
+<script language="JavaScript1.2">
+
+/***********************************************
+* Sliding Menu Bar Script- © Dynamic Drive (www.dynamicdrive.com)
+* Visit http://www.dynamicdrive.com/ for full source code
+* This notice must stay intact for use
+***********************************************/
+
+var slidemenu_width='160px' //specify width of menu (in pixels)
+var slidemenu_reveal='12px' //specify amount that menu should protrude initially
+var slidemenu_top='170px'   //specify vertical offset of menu on page
+
+var ns4=document.layers?1:0
+var ie4=document.all
+var ns6=document.getElementById&&!document.all?1:0
+
+if (ie4||ns6)
+document.write('<div id="slidemenubar2" style="left:'+((parseInt(slidemenu_width)-parseInt(slidemenu_reveal))*-1)+'px; top:'+slidemenu_top+'; width:'+slidemenu_width+'" onMouseover="pull()" onMouseout="draw()">')
+else if (ns4){
+document.write('<style>\n#slidemenubar{\nwidth:'+slidemenu_width+';}\n<\/style>\n')
+document.write('<layer id="slidemenubar" left=0 top='+slidemenu_top+' width='+slidemenu_width+' onMouseover="pull()" onMouseout="draw()" visibility=hide>')
+}
+
+var sitems=new Array()
+
+///////////Edit below/////////////////////////////////
+
+//siteitems[x]=["Item Text", "Optional URL associated with text"]
+
+sitems[0]=["<big><font face='Arial'>Site Menu</font></big>", ""]
+sitems[1]=["Home", "javascript:JaxcentServerRequest('Home');"]
+sitems[2]=["Products", "javascript:JaxcentServerRequest('Products.Test');"]
+sitems[3]=["Services", "javascript:JaxcentServerRequest('Services');"]
+sitems[4]=["Dynamic Drive", "http://www.dynamicdrive.com/dynamicindex11/"]
+
+//If you want the links to load in another frame/window, specify name of target (ie: target="_new")
+var target=""
+
+/////////////////////////////////////////////////////////
+
+if (ie4||ns4||ns6){
+for (i=0;i<sitems.length;i++){
+if (sitems[i][1])
+document.write('<a href="'+sitems[i][1]+'" target="'+target+'">')
+document.write(sitems[i][0])
+if (sitems[i][1])
+document.write('</a>')
+document.write('<br>\n')
+}
+}
+
+function regenerate(){
+window.location.reload()
+}
+function regenerate2(){
+if (ns4){
+document.slidemenubar.left=((parseInt(slidemenu_width)-parseInt(slidemenu_reveal))*-1)
+document.slidemenubar.visibility="show"
+setTimeout("window.onresize=regenerate",400)
+}
+}
+window.onload=regenerate2
+
+rightboundary=0
+leftboundary=(parseInt(slidemenu_width)-parseInt(slidemenu_reveal))*-1
+
+if (ie4||ns6){
+document.write('</div>')
+themenu=(ns6)? document.getElementById("slidemenubar2").style : document.all.slidemenubar2.style
+}
+else if (ns4){
+document.write('</layer>')
+themenu=document.layers.slidemenubar
+}
+
+function pull(){
+if (window.drawit)
+clearInterval(drawit)
+pullit=setInterval("pullengine()",10)
+}
+function draw(){
+clearInterval(pullit)
+drawit=setInterval("drawengine()",10)
+}
+function pullengine(){
+if ((ie4||ns6)&&parseInt(themenu.left)<rightboundary)
+themenu.left=parseInt(themenu.left)+10+"px"
+else if(ns4&&themenu.left<rightboundary)
+themenu.left+=10
+else if (window.pullit){
+themenu.left=0
+clearInterval(pullit)
+}
+}
+
+function drawengine(){
+if ((ie4||ns6)&&parseInt(themenu.left)>leftboundary)
+themenu.left=parseInt(themenu.left)-10+"px"
+else if(ns4&&themenu.left>leftboundary)
+themenu.left-=10
+else if (window.drawit){
+themenu.left=leftboundary
+clearInterval(drawit)
+}
+}
+</script>
+
+<script language="JavaScript">
+	new menu (MENU_ITEMS, MENU_TPL);
+</script>
+<TABLE>
+<TR><TD>&nbsp;</TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><TD>&nbsp;&nbsp;</TD>
+<TD>
+Jaxcent support can be easily added to CSS and/or
+JavaScript based menus.
+<P>This samples shows the addition of Jaxcent
+to two menu systems:
+<UL>
+<LI>Tigra from Soft Complex (at the top)
+<LI>Slide-In Menu bar from Dynamic Drive (at the left,
+move mouse over it to see menu.)
+</UL>
+A calendar sample is also available at <A HREF=http://www.jaxcent.com/samples/MoreSamples.html>http://www.jaxcent.com/samples/MoreSamples.html</A>.
+<HR>
+<P>
+JavaScript and/or CSS based menus typically provide
+instructions on customizing the menu.  These
+can usually be followed even by people not familiar
+with CSS or JavaScript.
+<P>
+During these customization instructions, at some point, a link for the menu must be provided.
+Usually, this will be of the form
+<PRE>
+    http://www.somedomain.com/somelink.html
+</PRE>
+To invoke Jaxcent, simply put in the following
+link instead
+<PRE>
+    javascript:JaxcentServerRequest('Some.Link');
+</PRE>
+replacing 'Some.Link' with some appropriate string.
+<P>
+On the Jaxcent side, override the <CODE>onJavaScriptRequest</CODE>
+of the <CODE>JaxcentPage</CODE> class, to retrieve the string
+passed in from the JavaScript side.  You can provide more than
+one arguments in the javascript call. Additional arguments will
+be provided as a String-array on the Java side.
+<P>
+The Java code that handles this page is provided below:
+<HR>
+<PRE>
+package sample;
+
+import jaxcent.*;
+
+public class MenuSample extends jaxcent.JaxcentPage {
+
+    protected void onJavaScriptRequest(java.lang.String cmd, java.lang.String[] args)
+    {
+        showMessageDialog( "Server received cmd: " + cmd );
+    }
+}
+</PRE>
+<HR>
+</TD>
+</TR>
+</TABLE>
+</body>
+</html>
