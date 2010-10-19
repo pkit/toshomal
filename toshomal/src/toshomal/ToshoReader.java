@@ -40,8 +40,8 @@ public class ToshoReader {
     {
         tosho_url = "http://tokyotosho.info/rss.php?filter=1";
         db = new EmbeddedDBConnector();
-        uname = "psorcerer";
-        pass = "zhopa123";
+        uname = "";
+        pass = "";
     }
 
     public static InputSource Geturl (String URL, String Name, String Password)
