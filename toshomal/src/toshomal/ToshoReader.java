@@ -32,7 +32,7 @@ public class ToshoReader {
 
     static String tosho_url;
     static EmbeddedDBConnector db;
-    static PrintWriter out;
+    //static PrintWriter out;
     private static String uname;
     private static String pass;
 
@@ -231,8 +231,8 @@ public class ToshoReader {
     {
         Date newUpdate = lastUpdate;
         try {
-            out = new PrintWriter(new FileWriter("test55.html"));
-            out.println("<html><body><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
+            //out = new PrintWriter(new FileWriter("test55.html"));
+            //out.println("<html><body><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
             URL feedUrl = new URL(tosho_url);
             Matcher m_200b = Pattern.compile("\u200B").matcher("");
 
@@ -292,13 +292,13 @@ public class ToshoReader {
                 if (best_entry != null)
                 {
                     System.out.println("FINAL MAL best match: " + best_entry.getChild("title").getTextTrim());
-                    PrintEntry(out, best_entry, entry);
+                    //PrintEntry(out, best_entry, entry);
                     db.UpdateEntry(best_entry, entry, fname);
                 }
                 System.out.println("========================================");
             }
-            out.println("</table></body></html>");
-            out.close();
+            //out.println("</table></body></html>");
+            //out.close();
         }   catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("ERROR: "+ex.getMessage());
