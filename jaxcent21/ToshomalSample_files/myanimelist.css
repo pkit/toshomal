@@ -957,3 +957,32 @@ p, .textReadability, span {
 	top: 3px;
 	z-index: 0;
 }
+
+.cell_img {
+     width: 53px;
+     float: left;
+}
+
+.cell_desc {
+     width: 450px;
+     float: left;
+     padding: 0 0 0 3px;
+}
+
+.cell_tags {
+     width: 448px;
+     float: left;
+     padding: 0 0 0 3px;
+}
+
+.table_newrow {
+     width: 100%;
+     clear: both;
+     font-size: 5px;
+     line-height: 1.0em;
+}
+
+.table_head {
+     font-size: 11px;
+     line-height: 1.5em;
+}

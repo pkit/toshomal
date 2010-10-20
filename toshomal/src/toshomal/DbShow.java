@@ -2,6 +2,7 @@ package toshomal;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class DbShow {
@@ -18,6 +19,7 @@ public class DbShow {
     private ArrayList<DbTag> tags;
     private int maxCount;
     private int minCount;
+    private Timestamp updateTime;
 
     public DbShow(ResultSet rs)
     {
@@ -98,5 +100,14 @@ public class DbShow {
     public String getFontSize(DbTag tag)
     {
         return String.format("font-size: %.2fem", 0.7 + Math.log(tag.getCount()) / Math.log(maxCount));
+    }
+
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Timestamp getUpdateTime() {
+        return updateTime;
     }
 }

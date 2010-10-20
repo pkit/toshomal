@@ -595,13 +595,14 @@ public class EmbeddedDBConnector
         if (limit < 0)
             return null;
         query = String.format("select"
-                +" show.id_show, show.name, show.malid, show.status, show.eps_number,"
-                +" show.image, max(file.time) from show, eps, epsperfile, file"
+                +" show.id_show, show.name, show.malid, show.status, show.type_show,"
+                +" show.eps_number, show.image, max(file.time)"
+                +" from show, eps, epsperfile, file"
                 +" where show.id_show = eps.id_show and eps.id_eps = epsperfile.id_eps"
                 +" and epsperfile.id_file = file.id_file"
                 +" group by show.id_show, show.name, show.malid, show.status,"
-                +" show.eps_number, show.image"
-                +" order by 7 desc fetch first %d rows only",
+                +" show.type_show, show.eps_number, show.image"
+                +" order by 8 desc fetch first %d rows only",
                 limit);
         stmt = this.getStatement(query);
         ArrayList<DbShow> result = new ArrayList<DbShow>();
@@ -609,13 +610,34 @@ public class EmbeddedDBConnector
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
             {
-                result.add(new DbShow(rs));
+                DbShow newShow = new DbShow(rs);
+                result.add(newShow);
+                newShow.setUpdateTime(rs.getTimestamp(8));
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
             this.closeStatement(stmt);
             return null;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
+    public String[] getCredentials()
+    {
+        String query = "select sval from settings where id in (0, 1)";
+        PreparedStatement stmt = this.getStatement(query);
+        String[] result = new String[2];
+        try {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                result[0] = rs.getString(1);
+            if (rs.next())
+                result[1] = rs.getString(1);
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         this.closeStatement(stmt);
         return result;

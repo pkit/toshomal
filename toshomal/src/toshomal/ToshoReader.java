@@ -44,6 +44,13 @@ public class ToshoReader {
         pass = "";
     }
 
+    public static void setCredentials()
+    {
+        String[] creds = db.getCredentials();
+        uname = creds[0];
+        pass = creds[1];
+    }
+
     public static InputSource Geturl (String URL, String Name, String Password)
     {
         InputStream content = null;
@@ -230,6 +237,7 @@ public class ToshoReader {
     public static Date getToshoContent(Date lastUpdate)
     {
         Date newUpdate = lastUpdate;
+        setCredentials();
         try {
             //out = new PrintWriter(new FileWriter("test55.html"));
             //out.println("<html><body><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
