@@ -72,3 +72,14 @@ after insert on file
 referencing new as newfile
 for each row mode db2sql
 update status set time = newfile.time where status.type = 0;
+
+create table settings (id integer, ival integer, tval timestamp, sval varchar (500));
+insert into settings values (0, null, null, null);
+insert into settings values (1, null, null, null);
+insert into settings values (2, null, null, null);
+insert into settings values (3, null, null, null);
+insert into settings values (4, null, null, null);
+insert into settings values (5, null, null, null);
+update settings set sval = 'p' where id = 0;
+update settings set sval = 'z' where id = 1;
+update settings set ival = 20 where id = 0;

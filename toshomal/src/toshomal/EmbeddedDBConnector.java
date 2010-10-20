@@ -138,7 +138,9 @@ public class EmbeddedDBConnector
 
     private int insertNewShow(String title, String malId, String epsnum, String type, String status, String imgurl)
     {
-        String insQry = "insert into show (name, malid, eps_number, type_show, status, image) values (?, ?, ?, ?, ?, ?)";
+        String insQry = "insert into show"
+                +" (name, malid, eps_number, type_show, status, image)"
+                +" values (?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = this.getStatement(insQry);
         try {
             stmt.setString(1, title);
@@ -173,7 +175,9 @@ public class EmbeddedDBConnector
 
     private int insertNewFile(String name, String url, String ext, String md5, String ver, String size)
     {
-        String insQry = "insert into file (time, name, url, ext, md5, ver, size) values (current_timestamp, ?, ?, ?, ?, ?, ?)";
+        String insQry = "insert into file"
+                +" (time, name, url, ext, md5, ver, size)"
+                +" values (current_timestamp, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = this.getStatement(insQry);
         try {
             stmt.setString(1, name);
@@ -351,7 +355,7 @@ public class EmbeddedDBConnector
         return res;
     }
 
-    public ArrayList<DbFile> getFileList()
+/*    public ArrayList<DbFile> getFileList()
     {
         String query = "select * from file";
         ArrayList<DbFile> result = new ArrayList<DbFile>();
@@ -370,9 +374,9 @@ public class EmbeddedDBConnector
         }
         this.closeStatement(stmt);
         return result;
-    }
+    }*/
 
-    public ArrayList<DbFile> getFileList(Timestamp updateTime)
+/*    public ArrayList<DbFile> getFileList(Timestamp updateTime)
     {
         String query = "select * from file where time > ?";
         ArrayList<DbFile> result = new ArrayList<DbFile>();
@@ -392,10 +396,13 @@ public class EmbeddedDBConnector
         }
         this.closeStatement(stmt);
         return result;
-    }
+    }*/
 
     public DbShow getShow(DbFile file) {
-        String query = "select distinct * from show, eps, epsperfile where show.id_show = eps.id_show and eps.id_eps = epsperfile.id_eps and epsperfile.id_file = ?";
+        String query = "select distinct show.*"
+                +" from show, eps, epsperfile"
+                +" where show.id_show = eps.id_show and eps.id_eps = epsperfile.id_eps"
+                +" and epsperfile.id_file = ?";
         PreparedStatement stmt = this.getStatement(query);
         DbShow result = null;
         try {
@@ -415,17 +422,194 @@ public class EmbeddedDBConnector
         return result;
     }
 
-    public ArrayList<DbEps> getShowEps(DbShow show)
+/*    public ArrayList<DbEps> getShowEps(DbShow show)
     {
         String query = "select * from eps where id_show = ?";
         PreparedStatement stmt = this.getStatement(query);
-        ArrayList<DbEps> result = null;
+        ArrayList<DbEps> result = new ArrayList<DbEps>();
         try {
             stmt.setInt(1, show.getId());
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
             {
                 result.add(new DbEps(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return null;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }*/
+
+    public void setShowFiles(DbShow show)
+    {
+        String query = "select distinct file.* from file, epsperfile, eps"
+                +" where file.id_file = epsperfile.id_file"
+                +" and epsperfile.id_eps = eps.id_eps and eps.id_show = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        try {
+            stmt.setInt(1, show.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                show.addFile(new DbFile(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+        }
+        this.closeStatement(stmt);
+    }
+
+    public void setShowEps(DbShow show)
+    {
+        String query = "select * from eps where eps.id_show = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        try {
+            stmt.setInt(1, show.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                show.addEps(new DbEps(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+        }
+        this.closeStatement(stmt);
+    }
+
+    public void setShowTags(DbShow show)
+    {
+        String query = "select tag.id_tag, tag.name, count(*) cnt"
+                +" from tag, tagsperfile, epsperfile, eps"
+                +" where tag.id_tag = tagsperfile.id_tag"
+                +" and tagsperfile.id_file = epsperfile.id_file"
+                +" and epsperfile.id_eps = eps.id_eps and eps.id_show = ?"
+                +" group by tag.id, tag.name";
+        PreparedStatement stmt = this.getStatement(query);
+        try {
+            stmt.setInt(1, show.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                show.addTag(new DbTag(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+        }
+        this.closeStatement(stmt);
+    }
+
+/*    public ArrayList<DbTag> getShowTags(DbShow show)
+    {
+        String query = "select tag.id_tag, tag.name, count(*) cnt"
+                +" from tag, tagsperfile, epsperfile, eps"
+                +" where tag.id_tag = tagsperfile.id_tag"
+                +" and tagsperfile.id_file = epsperfile.id_file"
+                +" and epsperfile.id_eps = eps.id_eps and eps.id_show = ?"
+                +" group by tag.id, tag.name";
+        PreparedStatement stmt = this.getStatement(query);
+        ArrayList<DbTag> result = new ArrayList<DbTag>();
+        try {
+            stmt.setInt(1, show.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                result.add(new DbTag(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return null;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }*/
+
+    public boolean isFileTag(DbFile file, DbTag tag)
+    {
+        String query = "select 1 from tagsperfile where id_file = ? and id_tag = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        boolean result = false;
+        try {
+            stmt.setInt(1, file.getId());
+            stmt.setInt(2, tag.getId());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                result = true;
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return false;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
+    public boolean isFileEps(DbFile file, DbEps eps)
+    {
+        String query = "select 1 from epsperfile where id_file = ? and id_eps = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        boolean result = false;
+        try {
+            stmt.setInt(1, file.getId());
+            stmt.setInt(2, eps.getId());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                result = true;
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return false;
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
+    public ArrayList<DbShow> getLatestShows()
+    {
+        String query = "select ival from settings where id = 0";
+        PreparedStatement stmt = this.getStatement(query);
+        int limit = -1;
+        try {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                limit = rs.getInt("ival");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return null;
+        }
+        this.closeStatement(stmt);
+        if (limit < 0)
+            return null;
+        query = String.format("select"
+                +" show.id_show, show.name, show.malid, show.status, show.eps_number,"
+                +" show.image, max(file.time) from show, eps, epsperfile, file"
+                +" where show.id_show = eps.id_show and eps.id_eps = epsperfile.id_eps"
+                +" and epsperfile.id_file = file.id_file"
+                +" group by show.id_show, show.name, show.malid, show.status,"
+                +" show.eps_number, show.image"
+                +" order by 7 desc fetch first %d rows only",
+                limit);
+        stmt = this.getStatement(query);
+        ArrayList<DbShow> result = new ArrayList<DbShow>();
+        try {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                result.add(new DbShow(rs));
             }
             rs.close();
         } catch (SQLException e) {
