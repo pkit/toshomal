@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: DoctypeChanger.jar derby.jar commons-lang-2.5.jar jdom.jar
+  commons-codec-1.4.jar rome-1.0.jar servlet-api.jar
+Main-Class: jaxcentServer.ServerMain
+
