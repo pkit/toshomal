@@ -17,7 +17,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
     boolean update = false;
 
     EmbeddedDBConnector db;
-    Timestamp lastFileUpdate;
+    Timestamp lastShowUpdate;
 
     ArrayList<DbShow> dbShows;
 
@@ -25,7 +25,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
         table = new HtmlDiv(this, "myanimelist");
         System.out.println("table: " + table.toString());
         update = true;
-        lastFileUpdate = new Timestamp(0);
+        lastShowUpdate = new Timestamp(0);
 
         clockThread = new Thread() {
             public void run() {
@@ -36,8 +36,17 @@ public class ClockSample extends jaxcent.JaxcentPage {
         db = new EmbeddedDBConnector();
         dbShows = db.getLatestShows();
         for(DbShow show : dbShows)
+        {
+            db.retrieveEps(show);
+            for(DbEps ep : show.getEps()) {
+                db.retrieveFiles(ep);
+            }
+            show.setLatestEps();
+            //db.retrieveFiles(show);
+            db.retrieveTags(show);
             createShow(show);
-        
+        }
+
         clockThread.start();
     }
 
@@ -84,8 +93,8 @@ public class ClockSample extends jaxcent.JaxcentPage {
             rowHdr.insertAtEnd(table);
             row.insertAtEnd(table);
 
-            if (show.getUpdateTime().after(lastFileUpdate))
-                lastFileUpdate = show.getUpdateTime();
+            if (show.getUpdateTime().after(lastShowUpdate))
+                lastShowUpdate = show.getUpdateTime();
 
         } catch (Jaxception jaxception) {
             jaxception.printStackTrace();
@@ -180,16 +189,40 @@ public class ClockSample extends jaxcent.JaxcentPage {
                     new String[] { "id", "class" },
                     new String[] { String.format("seps%d", show.getId()), "spaceit_pad" }
             );
-            for (DbEps ep : showEps)
+            if (show.getType().equals("Movie"))
             {
-                new HtmlAnchor(this, SearchType.createNew, ep.toString(),
+                new HtmlAnchor(this, SearchType.createNew, "Movie",
                         new String[]{ "class", "href" },
-                        new String[]{ "Lightbox_Small button_edit", "javascript:void(0);" }
+                        new String[]{ "Lightbox_Small button_form", "javascript:void(0);" }
                 ) {
                     public void onClick() {
 
                     }
                 }.insertAtEnd(result);
+                return result;
+            }
+            DbEps last = null;
+            for (DbEps ep : showEps)
+            {
+                last = ep;
+                String [] divVars = new String[]{ "Lightbox_Small button_edit", "javascript:void(0);" };
+                if(ep.equals(show.getLatestEps()))
+                        divVars[0] = "Lightbox_Small button_form";
+                new HtmlAnchor(this, SearchType.createNew, ep.toString(),
+                        new String[]{ "class", "href" },
+                        divVars
+                ) {
+                    public void onClick() {
+
+                    }
+                }.insertAtEnd(result);
+            }
+            if(last != null && last.getNum() < show.getEpsNum())
+            {
+                new HtmlItalic(this, SearchType.createNew, String.format(" ··· %d", show.getEpsNum()),
+                        new String[] { },
+                        new String[] { }
+                ).insertAtEnd(result);
             }
             return result;
         } catch (Jaxception jaxception) {

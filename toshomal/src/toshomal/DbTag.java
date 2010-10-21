@@ -14,7 +14,7 @@ public class DbTag {
         try {
             this.id = rs.getInt("id_tag");
             this.name = rs.getString("name");
-            this.count = rs.getInt("cnt");
+            this.count = rs.getInt(3);
         } catch (SQLException e) {
             e.printStackTrace();
         }

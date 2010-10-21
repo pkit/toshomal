@@ -20,6 +20,8 @@ public class DbShow {
     private int maxCount;
     private int minCount;
     private Timestamp updateTime;
+    private DbEps latestEps = null;
+    //private DbFile latestFile;
 
     public DbShow(ResultSet rs)
     {
@@ -34,6 +36,7 @@ public class DbShow {
             files = new ArrayList<DbFile>();
             eps = new ArrayList<DbEps>();
             tags = new ArrayList<DbTag>();
+            this.updateTime = new Timestamp(0);
             this.maxCount = 0;
             this.minCount = 5;
         } catch (SQLException e) {
@@ -64,6 +67,8 @@ public class DbShow {
 
     public boolean addFile(DbFile file)
     {
+        //if(! file.getUpdateTime().before(updateTime))
+        //    latestFile = file;
         return files.add(file);
     }
 
@@ -109,5 +114,30 @@ public class DbShow {
 
     public Timestamp getUpdateTime() {
         return updateTime;
+    }
+
+    public void setLatestEps()
+    {
+        latestEps = eps.get(0);
+        for(DbEps ep : eps)
+        {
+            DbFile file = ep.getLatestFile();
+            if (file.getUpdateTime().after(latestEps.getLatestFile().getUpdateTime()))
+                latestEps = ep;
+        }
+    }
+
+    public DbEps getLatestEps()
+    {
+        return latestEps;
+    }
+
+    public int getEpsNum() {
+        return epsnum;
+    }
+
+    public String getType() 
+    {
+        return type;
     }
 }

@@ -422,29 +422,7 @@ public class EmbeddedDBConnector
         return result;
     }
 
-/*    public ArrayList<DbEps> getShowEps(DbShow show)
-    {
-        String query = "select * from eps where id_show = ?";
-        PreparedStatement stmt = this.getStatement(query);
-        ArrayList<DbEps> result = new ArrayList<DbEps>();
-        try {
-            stmt.setInt(1, show.getId());
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-            {
-                result.add(new DbEps(rs));
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            this.closeStatement(stmt);
-            return null;
-        }
-        this.closeStatement(stmt);
-        return result;
-    }*/
-
-    public void setShowFiles(DbShow show)
+    public void retrieveFiles(DbShow show)
     {
         String query = "select distinct file.* from file, epsperfile, eps"
                 +" where file.id_file = epsperfile.id_file"
@@ -465,9 +443,30 @@ public class EmbeddedDBConnector
         this.closeStatement(stmt);
     }
 
-    public void setShowEps(DbShow show)
+    public void retrieveFiles(DbEps ep)
     {
-        String query = "select * from eps where eps.id_show = ?";
+        String query = "select distinct file.* from file, epsperfile"
+                +" where file.id_file = epsperfile.id_file"
+                +" and epsperfile.id_eps = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        try {
+            stmt.setInt(1, ep.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                ep.addFile(new DbFile(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+        }
+        this.closeStatement(stmt);
+    }
+
+    public void retrieveEps(DbShow show)
+    {
+        String query = "select * from eps where eps.id_show = ? order by num";
         PreparedStatement stmt = this.getStatement(query);
         try {
             stmt.setInt(1, show.getId());
@@ -484,14 +483,14 @@ public class EmbeddedDBConnector
         this.closeStatement(stmt);
     }
 
-    public void setShowTags(DbShow show)
+    public void retrieveTags(DbShow show)
     {
-        String query = "select tag.id_tag, tag.name, count(*) cnt"
+        String query = "select tag.id_tag, tag.name, count(*)"
                 +" from tag, tagsperfile, epsperfile, eps"
                 +" where tag.id_tag = tagsperfile.id_tag"
                 +" and tagsperfile.id_file = epsperfile.id_file"
                 +" and epsperfile.id_eps = eps.id_eps and eps.id_show = ?"
-                +" group by tag.id, tag.name";
+                +" group by tag.id_tag, tag.name";
         PreparedStatement stmt = this.getStatement(query);
         try {
             stmt.setInt(1, show.getId());
@@ -626,7 +625,7 @@ public class EmbeddedDBConnector
 
     public String[] getCredentials()
     {
-        String query = "select sval from settings where id in (0, 1)";
+        String query = "select sval,id from settings where id in (0, 1) order by id";
         PreparedStatement stmt = this.getStatement(query);
         String[] result = new String[2];
         try {
