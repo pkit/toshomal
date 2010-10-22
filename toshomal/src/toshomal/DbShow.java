@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DbShow {
 
@@ -92,12 +93,12 @@ public class DbShow {
         this.files = files;
     }
 
-    public ArrayList<DbTag> getTags()
+    public ArrayList<DbTag> getTagsList()
     {
         return tags;
     }
 
-    public ArrayList<DbEps> getEps()
+    public ArrayList<DbEps> getEpsList()
     {
         return eps;
     }
@@ -116,7 +117,7 @@ public class DbShow {
         return updateTime;
     }
 
-    public void setLatestEps()
+    public void updateLatestEpisode()
     {
         latestEps = eps.get(0);
         for(DbEps ep : eps)
@@ -139,5 +140,20 @@ public class DbShow {
     public String getType() 
     {
         return type;
+    }
+
+    public boolean hasSameId(DbShow show)
+    {
+        return (this.getId() == show.getId());
+    }
+
+    public HashMap<Integer,DbEps> getEpsMap()
+    {
+        HashMap<Integer,DbEps> result = new HashMap<Integer,DbEps>(Util.nextHashOrd(eps.size()));
+        for (DbEps ep : eps)
+        {
+            result.put(ep.getId(), ep);
+        }
+        return result;
     }
 }

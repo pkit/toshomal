@@ -21,13 +21,13 @@ public class BackendInstance extends Thread {
     ToshomalMessage beMsg;
     ToshomalMessage feMsg;
     ToshoReader reader;
-    Date lastUpdate;
+    //Date lastUpdate;
 
     public BackendInstance()
     {
         this.logline =  "Backend running...";
         this.reader = new ToshoReader();
-        this.lastUpdate = new Date(0);
+        //this.lastUpdate = new Date(0);
     }
     public void run() {
         try {
@@ -47,7 +47,7 @@ public class BackendInstance extends Thread {
                 else
                 { System.out.println("Failed to get message from frontend, will try later"); }
                 */
-                lastUpdate = getToshoContent(lastUpdate);
+                getToshoContent();
                 sleep(30000);
             }
         } catch (Exception e) {

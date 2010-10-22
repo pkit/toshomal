@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DbEps {
 
@@ -41,7 +42,8 @@ public class DbEps {
         return id;
     }
 
-    public boolean addFile(DbFile file) {
+    public boolean addFile(DbFile file)
+    {
         if (latestFile == null)
             latestFile = file;
         if(! file.getUpdateTime().before(latestFile.getUpdateTime()))
@@ -49,11 +51,17 @@ public class DbEps {
         return files.add(file);
     }
 
-    public DbFile getLatestFile() {
+    public DbFile getLatestFile()
+    {
         return latestFile;
     }
 
     public int getNum() {
         return num;
+    }
+
+    public ArrayList<DbFile> getFiles()
+    {
+        return files;
     }
 }

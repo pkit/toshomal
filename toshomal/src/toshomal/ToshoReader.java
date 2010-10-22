@@ -234,13 +234,11 @@ public class ToshoReader {
         return new ParsedFileName(file, eps, sub, ver, ext, md5, tags, search);
     }
 
-    public static Date getToshoContent(Date lastUpdate)
+    public static void getToshoContent()
     {
-        Date newUpdate = lastUpdate;
+        Date lastUpdate = db.getLatestUpdate();
         setCredentials();
         try {
-            //out = new PrintWriter(new FileWriter("test55.html"));
-            //out.println("<html><body><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
             URL feedUrl = new URL(tosho_url);
             InputStream rcvData = null;
             HttpURLConnection http = (HttpURLConnection) feedUrl.openConnection();
@@ -268,8 +266,8 @@ public class ToshoReader {
                     System.out.println("Old Entry: " + entry.getPublishedDate().toString() + "   " + entry.getTitle());
                     continue;
                 }
-                if (entry.getPublishedDate().after(newUpdate))
-                    newUpdate = entry.getPublishedDate();
+                if (entry.getPublishedDate().after(lastUpdate))
+                    lastUpdate = entry.getPublishedDate();
                 String title = entry.getTitle();
                 m_200b.reset(title);
                 title = m_200b.replaceAll("");
@@ -323,7 +321,6 @@ public class ToshoReader {
             ex.printStackTrace();
             System.out.println("ERROR: "+ex.getMessage());
         }
-        return newUpdate;
     }
 
     public static void main(String[] args) {

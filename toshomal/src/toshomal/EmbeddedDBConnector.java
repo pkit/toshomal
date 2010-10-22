@@ -5,6 +5,7 @@ import org.jdom.Element;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -355,7 +356,7 @@ public class EmbeddedDBConnector
         return res;
     }
 
-/*    public ArrayList<DbFile> getFileList()
+/*    public ArrayList<DbFile> fetchNewFilesList()
     {
         String query = "select * from file";
         ArrayList<DbFile> result = new ArrayList<DbFile>();
@@ -376,7 +377,7 @@ public class EmbeddedDBConnector
         return result;
     }*/
 
-/*    public ArrayList<DbFile> getFileList(Timestamp updateTime)
+    public ArrayList<DbFile> fetchNewFilesList(Timestamp updateTime)
     {
         String query = "select * from file where time > ?";
         ArrayList<DbFile> result = new ArrayList<DbFile>();
@@ -396,7 +397,7 @@ public class EmbeddedDBConnector
         }
         this.closeStatement(stmt);
         return result;
-    }*/
+    }
 
     public DbShow getShow(DbFile file) {
         String query = "select distinct show.*"
@@ -422,7 +423,7 @@ public class EmbeddedDBConnector
         return result;
     }
 
-    public void retrieveFiles(DbShow show)
+    public void fetchFiles(DbShow show)
     {
         String query = "select distinct file.* from file, epsperfile, eps"
                 +" where file.id_file = epsperfile.id_file"
@@ -443,7 +444,7 @@ public class EmbeddedDBConnector
         this.closeStatement(stmt);
     }
 
-    public void retrieveFiles(DbEps ep)
+    public void fetchFiles(DbEps ep)
     {
         String query = "select distinct file.* from file, epsperfile"
                 +" where file.id_file = epsperfile.id_file"
@@ -464,7 +465,7 @@ public class EmbeddedDBConnector
         this.closeStatement(stmt);
     }
 
-    public void retrieveEps(DbShow show)
+    public void fetchEps(DbShow show)
     {
         String query = "select * from eps where eps.id_show = ? order by num";
         PreparedStatement stmt = this.getStatement(query);
@@ -483,7 +484,7 @@ public class EmbeddedDBConnector
         this.closeStatement(stmt);
     }
 
-    public void retrieveTags(DbShow show)
+    public void fetchTags(DbShow show)
     {
         String query = "select tag.id_tag, tag.name, count(*)"
                 +" from tag, tagsperfile, epsperfile, eps"
@@ -576,7 +577,7 @@ public class EmbeddedDBConnector
         return result;
     }
 
-    public ArrayList<DbShow> getLatestShows()
+    public HashMap<Integer,DbShow> getLatestShows()
     {
         String query = "select ival from settings where id = 0";
         PreparedStatement stmt = this.getStatement(query);
@@ -604,13 +605,13 @@ public class EmbeddedDBConnector
                 +" order by 8 desc fetch first %d rows only",
                 limit);
         stmt = this.getStatement(query);
-        ArrayList<DbShow> result = new ArrayList<DbShow>();
+        HashMap<Integer,DbShow> result = new HashMap<Integer,DbShow>(Util.nextHashOrd(limit));
         try {
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
             {
                 DbShow newShow = new DbShow(rs);
-                result.add(newShow);
+                result.put(newShow.getId(), newShow);
                 newShow.setUpdateTime(rs.getTimestamp(8));
             }
             rs.close();
@@ -634,6 +635,23 @@ public class EmbeddedDBConnector
                 result[0] = rs.getString(1);
             if (rs.next())
                 result[1] = rs.getString(1);
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
+    public Timestamp getLatestUpdate()
+    {
+        String query = "select time from status where type = 0";
+        PreparedStatement stmt = this.getStatement(query);
+        Timestamp result = new Timestamp(0);
+        try {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                result = rs.getTimestamp(1);
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();

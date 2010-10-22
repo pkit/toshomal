@@ -2,10 +2,9 @@ package sample;
 
 import jaxcent.*;
 import toshomal.*;
-import toshomalBackend.ToshomalMessage;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml;
 
@@ -19,11 +18,10 @@ public class ClockSample extends jaxcent.JaxcentPage {
     EmbeddedDBConnector db;
     Timestamp lastShowUpdate;
 
-    ArrayList<DbShow> dbShows;
+    HashMap<Integer,DbShow> dbShows;
 
     public ClockSample() {
         table = new HtmlDiv(this, "myanimelist");
-        System.out.println("table: " + table.toString());
         update = true;
         lastShowUpdate = new Timestamp(0);
 
@@ -35,32 +33,43 @@ public class ClockSample extends jaxcent.JaxcentPage {
 
         db = new EmbeddedDBConnector();
         dbShows = db.getLatestShows();
-        for(DbShow show : dbShows)
-        {
-            db.retrieveEps(show);
-            for(DbEps ep : show.getEps()) {
-                db.retrieveFiles(ep);
+        ArrayList<DbShow> lShows = new ArrayList<DbShow>(dbShows.values());
+        Collections.sort(lShows, Util.LATEST_LAST);
+        try {
+            this.setBatchUpdates(true);
+            for(DbShow show : lShows)
+            {
+                setupNewShow(show);
+                addToPageTop(show);
             }
-            show.setLatestEps();
-            //db.retrieveFiles(show);
-            db.retrieveTags(show);
-            createShow(show);
+        } finally {
+            this.setBatchUpdates(false);
         }
 
         clockThread.start();
     }
 
-    private void createShow(DbShow show)
+    private void setupNewShow(DbShow show) {
+        db.fetchEps(show);
+        for(DbEps ep : show.getEpsList()) {
+            db.fetchFiles(ep);
+        }
+        show.updateLatestEpisode();
+        //db.fetchFiles(show);
+        db.fetchTags(show);
+    }
+
+    private void addToPageTop(DbShow show)
     {
         try {
             HtmlDiv rowHdr = new HtmlDiv(this, SearchType.createNew,
-                    new String[] { "class" },
-                    new String[] { "table_newrow" }
+                    new String[] { "id", "class" },
+                    new String[] { String.format("shdr%d", show.getId()), "table_newrow" }
             );
             rowHdr.setInnerText("&nbsp;");
             HtmlDiv row = new HtmlDiv(this, SearchType.createNew,
-                    new String[] { "style" },
-                    new String[] { "width: 100%;" }
+                    new String[] { "id", "style" },
+                    new String[] { String.format("srow%d", show.getId()), "width: 100%;" }
             );
             HtmlDiv cellImg = new HtmlDiv(this, SearchType.createNew,
                     new String[] { "id", "class" },
@@ -90,8 +99,8 @@ public class ClockSample extends jaxcent.JaxcentPage {
             cellTags.insertAtEnd(row);
             cellBorder.insertAtEnd(row);
 
-            rowHdr.insertAtEnd(table);
-            row.insertAtEnd(table);
+            row.insertAtBeginning(table);
+            rowHdr.insertAtBeginning(table);
 
             if (show.getUpdateTime().after(lastShowUpdate))
                 lastShowUpdate = show.getUpdateTime();
@@ -103,7 +112,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
 
     private HtmlDiv buildTags(DbShow show)
     {
-        ArrayList<DbTag> showTags = show.getTags();
+        ArrayList<DbTag> showTags = show.getTagsList();
         try {
             HtmlDiv result = new HtmlDiv(this, SearchType.createNew,
                     new String[] { "id", "class" },
@@ -116,7 +125,8 @@ public class ClockSample extends jaxcent.JaxcentPage {
                         new String[]{"class", "href", "style"},
                         new String[]{"button_add", "javascript:void(0);", show.getFontSize(tag)}
                 ) {
-                    public void onClick() {
+                    public void onClick()
+                    {
 
                     }
                 }.insertAtEnd(result);
@@ -183,7 +193,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
 
     private HtmlDiv buildEps(DbShow show)
     {
-        ArrayList<DbEps> showEps = show.getEps();
+        ArrayList<DbEps> showEps = show.getEpsList();
         try {
             HtmlDiv result = new HtmlDiv(this, SearchType.createNew, "Episodes: ",
                     new String[] { "id", "class" },
@@ -195,8 +205,10 @@ public class ClockSample extends jaxcent.JaxcentPage {
                         new String[]{ "class", "href" },
                         new String[]{ "Lightbox_Small button_form", "javascript:void(0);" }
                 ) {
-                    public void onClick() {
+                    public void onClick()
+                    {
 
+                        //showEpsFilesOnPage();
                     }
                 }.insertAtEnd(result);
                 return result;
@@ -207,15 +219,11 @@ public class ClockSample extends jaxcent.JaxcentPage {
                 last = ep;
                 String [] divVars = new String[]{ "Lightbox_Small button_edit", "javascript:void(0);" };
                 if(ep.equals(show.getLatestEps()))
-                        divVars[0] = "Lightbox_Small button_form";
-                new HtmlAnchor(this, SearchType.createNew, ep.toString(),
+                    divVars[0] = "Lightbox_Small button_form";
+                new EpsButton(this, SearchType.createNew, ep.toString(),
                         new String[]{ "class", "href" },
-                        divVars
-                ) {
-                    public void onClick() {
-
-                    }
-                }.insertAtEnd(result);
+                        divVars,
+                        result).insertAtEnd(result);
             }
             if(last != null && last.getNum() < show.getEpsNum())
             {
@@ -250,16 +258,111 @@ public class ClockSample extends jaxcent.JaxcentPage {
             //    fileList.add(file.toString());
             //}
             while ( update ) {
-/*                ArrayList<DbFile> newFiles = db.getFileList(lastFileUpdate);
-                for (DbFile file : newFiles)
-                {
-                    dbFiles.add(file);
-                    injectFile(file);
-                }*/
+                ArrayList<DbFile> newFiles = db.fetchNewFilesList(lastShowUpdate);
+                try {
+                    this.setBatchUpdates(true);
+                    for (DbFile newFile : newFiles)
+                    {
+                        DbShow newShow = db.getShow(newFile);
+                        setupNewShow(newShow);
+
+                        DbShow show = dbShows.get(newShow.getId());
+                        if (show != null)
+                        {
+                            dbShows.remove(show.getId());
+                            removeFromPage(show);
+                        }
+                        dbShows.put(newShow.getId(), newShow);
+                        addToPageTop(newShow);
+                    }
+                } finally {
+                    this.setBatchUpdates(false);
+                }
                 Thread.sleep( 1000 );
             }
         } catch (Exception ex) {
             // Exit thread on interrupted exception
         }
+    }
+
+    private void removeFromPage(DbShow show)
+    {
+        HtmlDiv rowHdr = new HtmlDiv(this, String.format("shdr%d", show.getId()));
+        HtmlDiv row = new HtmlDiv(this, String.format("srow%d", show.getId()));
+        try {
+            rowHdr.deleteElement();
+            row.deleteElement();
+        } catch (Jaxception jaxception) {
+            jaxception.printStackTrace();
+        }
+    }
+
+    private void testAnchor(String msg)
+    {
+        this.showMessageDialog(msg);
+    }
+
+    private class EpsButton extends HtmlAnchor {
+
+        private boolean down = false;
+        private HtmlDiv epsDiv;
+        private HtmlDiv fileList;
+        private JaxcentPage tpage;
+        private DbEps ep;
+
+        public EpsButton(JaxcentPage page, SearchType searchType, String text, String[] attributes, String[] values, HtmlDiv epsDiv) throws Jaxception {
+            super(page, searchType, text, attributes, values);
+            this.tpage = page;
+            this.epsDiv = epsDiv;
+        }
+
+        public void onClick()
+        {
+            if (down)
+            {
+                try {
+                    fileList = new HtmlDiv(tpage,SearchType.createNew,
+                            new String[] { "class" }, new String[] { "eps_file_list" });
+                    for(HtmlDiv fileDiv : buildFiles(ep))
+                    {
+                        fileDiv.insertAtEnd(fileList);
+                    }
+                    fileList.insertAfter(epsDiv);
+                } catch (Jaxception jaxception) {
+                    jaxception.printStackTrace();
+                } finally {
+                    down = ! down;
+                }
+            }
+            else
+            {
+                try {
+                    fileList.deleteElement();
+                } catch (Jaxception jaxception) {
+                    jaxception.printStackTrace();
+                } finally {
+                    down = ! down;
+                }
+            }
+        }
+    }
+
+    private ArrayList<HtmlDiv> buildFiles(DbEps ep)
+    {
+        ArrayList<HtmlDiv> result = new ArrayList<HtmlDiv>();
+        ArrayList<DbFile> sortedFiles = ep.getFiles();
+        Collections.sort(sortedFiles, DbFile.LATEST_FIRST);
+        for (DbFile f : sortedFiles)
+        {
+            try {
+                HtmlDiv div = new HtmlDiv(this, SearchType.createNew, new String[] {}, new String[] {});
+                HtmlAnchor link = new HtmlAnchor(this, SearchType.createNew, f.getName(), new String[] { "href" }, new String[] { "javascript:void(0);" });
+                link.insertAtBeginning(div);
+                result.add(div);
+            } catch (Jaxception jaxception) {
+                jaxception.printStackTrace();
+            }
+        }
+        return result;
     }
 }

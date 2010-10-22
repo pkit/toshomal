@@ -3,6 +3,7 @@ package toshomal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Comparator;
 
 public class DbFile {
 
@@ -52,4 +53,13 @@ public class DbFile {
     public int getId() {
         return id;
     }
+
+    public static final Comparator<DbFile> LATEST_FIRST =
+            new Comparator<DbFile>()
+            {
+                public int compare(DbFile a, DbFile b)
+                {
+                    return b.getUpdateTime().compareTo(a.getUpdateTime());
+                }
+            };
 }
