@@ -15,16 +15,16 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import static org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 
@@ -242,10 +242,22 @@ public class ToshoReader {
             //out = new PrintWriter(new FileWriter("test55.html"));
             //out.println("<html><body><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
             URL feedUrl = new URL(tosho_url);
+            InputStream rcvData = null;
+            HttpURLConnection http = (HttpURLConnection) feedUrl.openConnection();
+            http.setRequestProperty("Accept-Encoding", "gzip,deflate");
+            http.connect();
+            String encoding = http.getContentEncoding();
+            if (encoding.equalsIgnoreCase("gzip"))
+                rcvData = new GZIPInputStream(http.getInputStream());
+            else if (encoding.equalsIgnoreCase("deflate"))
+                rcvData = new InflaterInputStream(http.getInputStream(), new Inflater(true));
+            else
+                rcvData = http.getInputStream();
+            XmlReader reader = new XmlReader(rcvData);
             Matcher m_200b = Pattern.compile("\u200B").matcher("");
 
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(feedUrl));
+            SyndFeed feed = input.build(reader);
 
             Iterator entryIter = feed.getEntries().iterator();
             while (entryIter.hasNext())
