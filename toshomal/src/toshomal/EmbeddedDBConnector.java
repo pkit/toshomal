@@ -486,7 +486,7 @@ public class EmbeddedDBConnector
 
     public void fetchTags(DbShow show)
     {
-        String query = "select tag.id_tag, tag.name, count(*)"
+        String query = "select tag.id_tag, tag.name, count(distinct tagsperfile.id_file)"
                 +" from tag, tagsperfile, epsperfile, eps"
                 +" where tag.id_tag = tagsperfile.id_tag"
                 +" and tagsperfile.id_file = epsperfile.id_file"

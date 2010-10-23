@@ -77,7 +77,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
             );
             HtmlDiv cellDesc = new HtmlDiv(this, SearchType.createNew,
                     new String[] { "id", "class" },
-                    new String[] { String.format("simg%d", show.getId()), "cell_desc" }
+                    new String[] { String.format("sdesc%d", show.getId()), "cell_desc" }
             );
             HtmlDiv cellTags = new HtmlDiv(this, SearchType.createNew,
                     new String[] { "class" },
@@ -121,9 +121,9 @@ public class ClockSample extends jaxcent.JaxcentPage {
             for (DbTag tag : showTags)
             {
                 new HtmlAnchor(
-                        this, SearchType.createNew, tag.getName(),
-                        new String[]{"class", "href", "style"},
-                        new String[]{"button_add", "javascript:void(0);", show.getFontSize(tag)}
+                        this, SearchType.createNew, String.format("[%s](%d)",tag.getName(),tag.getCount()),
+                        new String[]{ "href", "style" },
+                        new String[]{ "javascript:void(0);", show.getFontSize(tag) }
                 ) {
                     public void onClick()
                     {
@@ -184,6 +184,10 @@ public class ClockSample extends jaxcent.JaxcentPage {
                     new String[]{ "class" }, new String[]{ "lightLink" }
             ).insertAtEnd(result);
 
+            new HtmlDiv(this, SearchType.createNew, "Type: " + show.getType(),
+                    new String[]{ "class" }, new String[]{ "lightLink" }
+            ).insertAtEnd(result);
+
             return result;
         } catch (Jaxception jaxception) {
             jaxception.printStackTrace();
@@ -201,16 +205,11 @@ public class ClockSample extends jaxcent.JaxcentPage {
             );
             if (show.getType().equals("Movie"))
             {
-                new HtmlAnchor(this, SearchType.createNew, "Movie",
+                DbEps ep = showEps.get(0);
+                new EpsButton(this, SearchType.createNew, "Movie",
                         new String[]{ "class", "href" },
-                        new String[]{ "Lightbox_Small button_form", "javascript:void(0);" }
-                ) {
-                    public void onClick()
-                    {
-
-                        //showEpsFilesOnPage();
-                    }
-                }.insertAtEnd(result);
+                        new String[]{ "Lightbox_Small button_form", "javascript:void(0);" },
+                        result, ep).insertAtEnd(result);
                 return result;
             }
             DbEps last = null;
@@ -223,7 +222,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
                 new EpsButton(this, SearchType.createNew, ep.toString(),
                         new String[]{ "class", "href" },
                         divVars,
-                        result).insertAtEnd(result);
+                        result, ep).insertAtEnd(result);
             }
             if(last != null && last.getNum() < show.getEpsNum())
             {
@@ -264,6 +263,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
                     for (DbFile newFile : newFiles)
                     {
                         DbShow newShow = db.getShow(newFile);
+                        newShow.setUpdateTime(newFile.getUpdateTime());
                         setupNewShow(newShow);
 
                         DbShow show = dbShows.get(newShow.getId());
@@ -304,24 +304,26 @@ public class ClockSample extends jaxcent.JaxcentPage {
 
     private class EpsButton extends HtmlAnchor {
 
-        private boolean down = false;
+        private boolean down;
         private HtmlDiv epsDiv;
         private HtmlDiv fileList;
         private JaxcentPage tpage;
         private DbEps ep;
 
-        public EpsButton(JaxcentPage page, SearchType searchType, String text, String[] attributes, String[] values, HtmlDiv epsDiv) throws Jaxception {
+        public EpsButton(JaxcentPage page, SearchType searchType, String text, String[] attributes, String[] values, HtmlDiv epsDiv, DbEps ep) throws Jaxception {
             super(page, searchType, text, attributes, values);
             this.tpage = page;
             this.epsDiv = epsDiv;
+            this.down = false;
+            this.ep = ep;
         }
 
         public void onClick()
         {
-            if (down)
+            if (! down)
             {
                 try {
-                    fileList = new HtmlDiv(tpage,SearchType.createNew,
+                    fileList = new HtmlDiv(tpage, SearchType.createNew, "Episode " + ep.toString(),
                             new String[] { "class" }, new String[] { "eps_file_list" });
                     for(HtmlDiv fileDiv : buildFiles(ep))
                     {
@@ -337,7 +339,8 @@ public class ClockSample extends jaxcent.JaxcentPage {
             else
             {
                 try {
-                    fileList.deleteElement();
+                    if (fileList != null)
+                        fileList.deleteElement();
                 } catch (Jaxception jaxception) {
                     jaxception.printStackTrace();
                 } finally {

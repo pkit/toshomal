@@ -31,7 +31,7 @@ public class DbShow {
             this.name = rs.getString("name");
             this.malid = rs.getInt("malid");
             this.status = rs.getString("status");
-            this.type = rs.getString("type_show");
+            this.type = rs.getString("type_show").trim();
             this.epsnum = rs.getInt("eps_number");
             this.image = rs.getString("image");
             files = new ArrayList<DbFile>();
@@ -155,5 +155,10 @@ public class DbShow {
             result.put(ep.getId(), ep);
         }
         return result;
+    }
+
+    public String getMalId() 
+    {
+        return String.format("%d", malid);
     }
 }

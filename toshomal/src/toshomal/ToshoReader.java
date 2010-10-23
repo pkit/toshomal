@@ -234,9 +234,10 @@ public class ToshoReader {
         return new ParsedFileName(file, eps, sub, ver, ext, md5, tags, search);
     }
 
-    public static void getToshoContent()
+    public static boolean getToshoContent()
     {
         Date lastUpdate = db.getLatestUpdate();
+        boolean result = false;
         setCredentials();
         try {
             URL feedUrl = new URL(tosho_url);
@@ -267,7 +268,10 @@ public class ToshoReader {
                     continue;
                 }
                 if (entry.getPublishedDate().after(lastUpdate))
+                {
                     lastUpdate = entry.getPublishedDate();
+                    result = true;
+                }
                 String title = entry.getTitle();
                 m_200b.reset(title);
                 title = m_200b.replaceAll("");
@@ -321,6 +325,7 @@ public class ToshoReader {
             ex.printStackTrace();
             System.out.println("ERROR: "+ex.getMessage());
         }
+        return result;
     }
 
     public static void main(String[] args) {
