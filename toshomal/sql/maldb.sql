@@ -71,7 +71,7 @@ create trigger ts_update
 after insert on file
 referencing new as newfile
 for each row mode db2sql
-update status set time = newfile.time where status.type = 0;
+update status set time = newfile.time where status.type = 0 and time < newfile.time;
 
 create table settings (id integer, ival integer, tval timestamp, sval varchar (500));
 insert into settings values (0, null, null, null);

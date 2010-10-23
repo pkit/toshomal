@@ -16,6 +16,7 @@ import org.xml.sax.InputSource;
 
 import java.io.*;
 import java.net.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -259,6 +260,7 @@ public class ToshoReader {
             SyndFeed feed = input.build(reader);
 
             Iterator entryIter = feed.getEntries().iterator();
+            Date newUpdate = lastUpdate;
             while (entryIter.hasNext())
             {
                 SyndEntry entry = (SyndEntry) entryIter.next();
@@ -267,9 +269,9 @@ public class ToshoReader {
                     System.out.println("Old Entry: " + entry.getPublishedDate().toString() + "   " + entry.getTitle());
                     continue;
                 }
-                if (entry.getPublishedDate().after(lastUpdate))
+                if (entry.getPublishedDate().after(newUpdate))
                 {
-                    lastUpdate = entry.getPublishedDate();
+                    newUpdate = entry.getPublishedDate();
                     result = true;
                 }
                 String title = entry.getTitle();
