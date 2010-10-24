@@ -49,6 +49,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
         clockThread.start();
     }
 
+
     private void setupNewShow(DbShow show) {
         db.fetchEps(show);
         for(DbEps ep : show.getEpsList()) {
@@ -259,7 +260,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
             while ( update ) {
                 ArrayList<DbFile> newFiles = db.fetchNewFilesList(lastShowUpdate);
                 try {
-                    this.setBatchUpdates(true);
+                    //this.setBatchUpdates(true);
                     for (DbFile newFile : newFiles)
                     {
                         DbShow newShow = db.getShow(newFile);
@@ -276,7 +277,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
                         addToPageTop(newShow);
                     }
                 } finally {
-                    this.setBatchUpdates(false);
+                    //this.setBatchUpdates(false);
                 }
                 Thread.sleep( 1000 );
             }
