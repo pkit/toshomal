@@ -1,9 +1,14 @@
 package sample;
 
 import jaxcent.*;
+import org.xml.sax.InputSource;
 import toshomal.DbShow;
+import toshomal.EmbeddedDBConnector;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import static toshomal.ToshoReader.searchForShow;
 
 public class ShowEditorDiv extends HtmlDiv
 {
@@ -133,7 +138,7 @@ public class ShowEditorDiv extends HtmlDiv
                         "Anime Image",
                         "<input type=\"text\" name=\"show_img\" id=\"input_show_img\" class=\"inputtext\" value=\"" +
                                 show.getImgUrl() +
-                                "\" size=\"55\"><div class=\"picSurround\"><img src=\"" +
+                                "\" size=\"55\"><div class=\"picSurround\"><img id=\"input_img_tag\" src=\"" +
                                 show.getImgUrl() +
                                 "\" border=\"0\"></a></div>"
                 },
@@ -167,7 +172,7 @@ public class ShowEditorDiv extends HtmlDiv
                         "<input type=\"text\" name=\"show_search\" id=\"input_show_search\" class=\"inputtext\" value=\"" +
                                 show.getName() +
                                 "\" size=\"50\">" +
-                        "<input type=\"button\" id=\"ShowEditSearch\" class=\"inputButton\" value=\"Search\">"
+                                "<input type=\"button\" id=\"ShowEditSearch\" class=\"inputButton\" value=\"Search\">"
                 },
                 new String[][] {
                         { "class", "valign" },
@@ -200,5 +205,104 @@ public class ShowEditorDiv extends HtmlDiv
             result += String.format("<option value=\"%d\"%s>%s", i, selected, list[i]);
         }
         return result;
+    }
+
+    public void addHandlers() {
+        HtmlInputButton search = new HtmlInputButton(tpage, "ShowEditSearch")
+        {
+            public void onClick(Map pageData)
+            {
+                try {
+                    if (this.getDisabled())
+                        return;
+                    try {
+                        this.setDisabled(true);
+                        DbShow show = searchForShow((String) pageData.get("show_search"));
+                        if (show == null)
+                        {
+                            tpage.showMessageDialog("Your search for \"" + pageData.get("show_search") + "\" did not return any results...");
+                        }
+                        else
+                        {
+                            HtmlInputText input = new HtmlInputText(tpage, "input_show_name");
+                            input.setValue(show.getName());
+                            input = new HtmlInputText(tpage, "input_mal_id");
+                            input.setValue(show.getMalId());
+                            HtmlSelect select = new HtmlSelect(tpage, "input_show_status");
+                            for (int i = 0; i < select.getNumOptions(); ++i)
+                            {
+                                if (select.getOption(i).getValue().equals(show.getStatus()))
+                                {
+                                    select.setSelectedIndex(i);
+                                    break;
+                                }
+                            }
+                            select = new HtmlSelect(tpage, "input_show_type");
+                            for (int i = 0; i < select.getNumOptions(); ++i)
+                            {
+                                if (select.getOption(i).getValue().equals(show.getType()))
+                                {
+                                    select.setSelectedIndex(i);
+                                    break;
+                                }
+                            }
+                            input = new HtmlInputText(tpage, "input_show_epsnum");
+                            input.setValue(String.format("%d",show.getEpsNum()));
+                            input = new HtmlInputText(tpage, "input_show_img");
+                            input.setValue(show.getImgUrl());
+                            HtmlImage img = new HtmlImage(tpage, "input_img_tag");
+                            img.setSrc(show.getImgUrl());
+                        }
+                    } finally {
+                        this.setDisabled(false);
+                    }
+                } catch (Jaxception jaxception) {
+                    jaxception.printStackTrace();
+                }
+                //tpage.showMessageDialog("You've searched for: " + pageData.get("show_search"));
+            }
+        };
+
+        HtmlInputButton update = new HtmlInputButton(tpage, "ShowEditSubmitB")
+        {
+            public void onClick(Map pageData)
+            {
+                try {
+                    if (this.getDisabled())
+                        return;
+                    try {
+                        this.setDisabled(true);
+
+                        HtmlInputText input = new HtmlInputText(tpage, "input_show_name");
+                        String title = input.getValue();
+                        input = new HtmlInputText(tpage, "input_mal_id");
+                        int malid = Integer.parseInt(input.getValue());
+                        HtmlSelect select = new HtmlSelect(tpage, "input_show_status");
+                        String status = select.getOption(select.getSelectedIndex()).getValue();
+                        select = new HtmlSelect(tpage, "input_show_type");
+                        String type = select.getOption(select.getSelectedIndex()).getValue();
+                        input = new HtmlInputText(tpage, "input_show_epsnum");
+                        int epsnum = Integer.parseInt(input.getValue());
+                        input = new HtmlInputText(tpage, "input_show_img");
+                        String img = input.getValue();
+                        DbShow newShow = new DbShow(show.getId(), title, malid, status, type, epsnum, img);
+
+                        EmbeddedDBConnector db = new EmbeddedDBConnector();
+                        if(! db.updateShowDetails(newShow, false))
+                        {
+                            if(tpage.showConfirmDialog("There is an anime with \"" + title + "\" title in the DB\nMerge them into one?"))
+                            {
+                                db.updateShowDetails(newShow, true);
+                                db.mergeShowData(newShow);
+                            }
+                        }
+                    } finally {
+                        this.setDisabled(false);
+                    }
+                } catch (Jaxception jaxception) {
+                    jaxception.printStackTrace();
+                }
+            }
+        };
     }
 }

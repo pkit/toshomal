@@ -95,6 +95,26 @@ public class EmbeddedDBConnector
         return result;
     }
 
+    private String getShowName(int id)
+    {
+        String query = "select name from show where id_show = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        String result = null;
+        try {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                result = rs.getString(1);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        this.closeStatement(stmt);
+        return result;
+    }
+
     private int getEpsId(int showId, int epsNum, int epsSub)
     {
         String query = "select id_eps from eps where id_show = ? and num = ? and sub = ?";
@@ -658,6 +678,114 @@ public class EmbeddedDBConnector
         }
         this.closeStatement(stmt);
         return result;
+    }
+
+    public boolean updateShowDetails(DbShow show, boolean force)
+    {
+        int id = getShowId(show.getName());
+        if (force || id == -1 || id == show.getId())
+        {
+            String query = "update show set name = ?, malid = ?, status = ?, type_show = ?, eps_number = ?, image = ? where id_show = ?";
+            PreparedStatement stmt = this.getStatement(query);
+            try {
+                stmt.setString(1, show.getName());
+                stmt.setInt(2, Integer.parseInt(show.getMalId()));
+                stmt.setString(3, show.getStatus());
+                stmt.setString(4, show.getType());
+                stmt.setInt(5, show.getEpsNum());
+                stmt.setString(6, show.getImgUrl());
+                stmt.setInt(7, show.getId());
+                stmt.executeUpdate();
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            this.closeStatement(stmt);
+        }
+        return false;
+    }
+
+    public void mergeShowData(DbShow newShow)
+    {
+        int oldId = getShowId(newShow.getName());
+        int newId = newShow.getId();
+        if (oldId == newId)
+            return; // WTF? Shouldn't happen!
+        String query = "update show set " +
+                "malid = (select malid from show where id_show = ?), " +
+                "status = (select status from show where id_show = ?), " +
+                "type_show = (select type_show from show where id_show = ?), " +
+                "eps_number = (select eps_number from show where id_show = ?), " +
+                "image = (select image from show where id_show = ?) " +
+                "where id_show = ?";
+        PreparedStatement stmt = this.getStatement(query);
+        try {
+            stmt.setInt(1, newId);
+            stmt.setInt(2, newId);
+            stmt.setInt(3, newId);
+            stmt.setInt(4, newId);
+            stmt.setInt(5, newId);
+            stmt.setInt(6, oldId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return;
+        }
+        query = "select old.id_eps, new.id_eps from eps old, eps new where old.id_show = ? and new.id_show = ? and old.num = new.num and old.sub = new.sub";
+        try {
+            PreparedStatement s = conn.prepareStatement(query);
+            s.setInt(1, oldId);
+            s.setInt(2, newId);
+            ResultSet rs = s.executeQuery();
+            ArrayList<Integer> newEps = new ArrayList<Integer>();
+            while (rs.next())
+            {
+                int oldEpsId = rs.getInt(1);
+                int newEpsId = rs.getInt(2);
+                newEps.add(newEpsId);
+                Statement st = conn.createStatement();
+                st.executeUpdate(String.format("update epsperfile set id_eps = %d where id_eps = %d", oldEpsId, newEpsId));
+                st.close();
+            }
+            s.close();
+            for (int epId : newEps)
+            {
+                Statement st = conn.createStatement();
+                st.executeUpdate(String.format("delete from eps where id_eps = %d", epId));
+                st.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return;
+        }
+
+        query = "update eps set id_show = ? where id_show = ?";
+        try {
+            PreparedStatement s = conn.prepareStatement(query);
+            s.setInt(1, oldId);
+            s.setInt(2, newId);
+            s.executeUpdate();
+            s.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return;
+        }
+
+        query = "delete from show where id_show = ?";
+        try {
+            PreparedStatement s = conn.prepareStatement(query);
+            s.setInt(1, newId);
+            s.executeUpdate();
+            s.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.closeStatement(stmt);
+            return;
+        }
+        this.closeStatement(stmt);
     }
 }
 

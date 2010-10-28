@@ -290,9 +290,10 @@ public class ToshoReader {
                     best_entry = GetShowDetails(ins, fname.getSearch(),lvdist);
                     if (best_entry != null)
                         System.out.println("MAL best match: " + best_entry.getChild("title").getTextTrim());
-                    if (search.compareTo(full_title.getLeft()) == 0)
+                    String part = full_title.getLeft();
+                    if (search.compareTo(part) == 0)
                         break;
-                    search = full_title.getLeft();
+                    search = part;
                     System.out.println("Search string: " + search);
                     ins = Geturl("http://myanimelist.net/api/anime/search.xml?q=" + URLEncoder.encode(search,"utf-8"), uname, pass);
                 }
@@ -306,9 +307,10 @@ public class ToshoReader {
                         best_entry = GetShowDetails(ins, fname.getSearch(),lvdist);
                         if (best_entry != null)
                             System.out.println("MAL best match: " + best_entry.getChild("title").getTextTrim());
-                        if (search.compareTo(full_title.getRight()) == 0)
+                        String part = full_title.getRight();
+                        if (search.compareTo(part) == 0)
                             break;
-                        search = full_title.getRight();
+                        search = part;
                         System.out.println("Search string: " + search);
                         ins = Geturl("http://myanimelist.net/api/anime/search.xml?q=" + URLEncoder.encode(search,"utf-8"), uname, pass);
                     }
@@ -328,6 +330,33 @@ public class ToshoReader {
             System.out.println("ERROR: "+ex.getMessage());
         }
         return result;
+    }
+
+    public static DbShow searchForShow(String search)
+    {
+        DbShow show = null;
+        try {
+            InputSource ins = Geturl("http://myanimelist.net/api/anime/search.xml?q=" + URLEncoder.encode(search,"utf-8"), uname, pass);
+            if(ins != null)
+            {
+                Element result = GetShowDetails(ins, search ,500);
+                if (result != null)
+                {
+                    Matcher m_thumb = Pattern.compile("\\.jpg$").matcher(result.getChild("image").getTextTrim());
+                    String image = m_thumb.replaceFirst("t.jpg");
+                    show = new DbShow(-1,
+                            result.getChild("title").getTextTrim(),
+                            Integer.parseInt(result.getChild("id").getTextTrim()),
+                            result.getChild("status").getTextTrim(),
+                            result.getChild("type").getTextTrim(),
+                            Integer.parseInt(result.getChild("episodes").getTextTrim()),
+                            image);
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return show;
     }
 
     public static void main(String[] args) {

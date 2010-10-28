@@ -45,6 +45,23 @@ public class DbShow {
         }
     }
 
+    public DbShow(int id, String name, int malid, String status, String type, int epsnum, String image)
+    {
+        this.id = id;
+        this.name = name;
+        this.malid = malid;
+        this.status = status;
+        this.type = type;
+        this.epsnum = epsnum;
+        this.image = image;
+        files = new ArrayList<DbFile>();
+        eps = new ArrayList<DbEps>();
+        tags = new ArrayList<DbTag>();
+        this.updateTime = new Timestamp(0);
+        this.maxCount = 0;
+        this.minCount = 5;
+    }
+
     public String getMalUrl() {
         return String.format("http://myanimelist.net/anime/%d/", malid);
     }
@@ -137,7 +154,7 @@ public class DbShow {
         return epsnum;
     }
 
-    public String getType() 
+    public String getType()
     {
         return type;
     }
@@ -157,8 +174,13 @@ public class DbShow {
         return result;
     }
 
-    public String getMalId() 
+    public String getMalId()
     {
         return String.format("%d", malid);
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
     }
 }
