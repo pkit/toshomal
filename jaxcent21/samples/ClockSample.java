@@ -19,6 +19,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
     Timestamp lastShowUpdate;
 
     HashMap<Integer,DbShow> dbShows;
+    private boolean showEditorVisible = false;
 
     public ClockSample() {
         table = new HtmlDiv(this, "myanimelist");
@@ -161,7 +162,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
         return null;
     }
 
-    private HtmlDiv buildDesc(DbShow show)
+    private HtmlDiv buildDesc(final DbShow show)
     {
         try {
             HtmlDiv result = new HtmlDiv(this, SearchType.createNew,
@@ -175,6 +176,17 @@ public class ClockSample extends jaxcent.JaxcentPage {
                     unescapeHtml(show.getName())
             ).insertAtBeginning(anchor);
 
+            anchor.insertAtEnd(result);
+
+            anchor = new HtmlAnchor(this, SearchType.createNew, "edit",
+                    new String[] { "class", "href" },
+                    new String[] { "button_edit", "javascript:void(0);" }
+            ){
+                public void onClick()
+                {
+                    showEditor(show);
+                }
+            };
             anchor.insertAtEnd(result);
 
             new HtmlDiv(this, SearchType.createNew, show.getStatus(),
@@ -194,6 +206,33 @@ public class ClockSample extends jaxcent.JaxcentPage {
             jaxception.printStackTrace();
         }
         return null;
+    }
+
+    private void showEditor(DbShow show)
+    {
+        try {
+            if (showEditorVisible)
+            {
+                HtmlDiv old = new HtmlDiv(this, "ShowEditorDiv");
+                old.deleteElement();
+            }
+            ShowEditorDiv editor = null;
+            try {
+                this.setBatchUpdates(true);
+                editor = new ShowEditorDiv(this, SearchType.createNew, "", new String[] { "id" }, new String[] { "ShowEditorDiv" }, show);
+                HtmlDiv row = new HtmlDiv(this, String.format("srow%d", show.getId()));
+                editor.insertAfter(row);
+            } catch (Jaxception jaxception) {
+                jaxception.printStackTrace();
+            } finally {
+                this.setBatchUpdates(false);
+            }
+            if (editor != null)
+                editor.addHandlers();
+            showEditorVisible = true;
+        } catch (Jaxception jaxception) {
+            jaxception.printStackTrace();
+        }
     }
 
     private HtmlDiv buildEps(DbShow show)
@@ -360,7 +399,7 @@ public class ClockSample extends jaxcent.JaxcentPage {
         {
             try {
                 HtmlDiv div = new HtmlDiv(this, SearchType.createNew, new String[] {}, new String[] {});
-                HtmlAnchor link = new HtmlAnchor(this, SearchType.createNew, f.getName(), new String[] { "href" }, new String[] { "javascript:void(0);" });
+                HtmlAnchor link = new HtmlAnchor(this, SearchType.createNew, f.getName(), new String[] { "href" }, new String[] { unescapeHtml(f.getUrl()) });
                 link.insertAtBeginning(div);
                 result.add(div);
             } catch (Jaxception jaxception) {

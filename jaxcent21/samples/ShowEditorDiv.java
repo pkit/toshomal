@@ -156,7 +156,8 @@ public class ShowEditorDiv extends HtmlDiv
                 new String[] {
                         "<input type=\"button\" id=\"ShowEditSubmitB\" class=\"inputButton\" " +
                                 "style=\"font-weight: bold; font-size: 12px;\" " +
-                                "value=\"Update & Close\">",
+                                "value=\"Update & Close\">" +
+                                "&nbsp;<input type=\"button\" id=\"ShowEditClose\" class=\"inputButton\" value=\"Close\">",
                 },
                 new String[][] {
                         { "colspan", "align" }
@@ -278,14 +279,16 @@ public class ShowEditorDiv extends HtmlDiv
                         input = new HtmlInputText(tpage, "input_mal_id");
                         int malid = Integer.parseInt(input.getValue());
                         HtmlSelect select = new HtmlSelect(tpage, "input_show_status");
-                        String status = select.getOption(select.getSelectedIndex()).getValue();
+                        String status = select.getOption(select.getSelectedIndex()).getText();
                         select = new HtmlSelect(tpage, "input_show_type");
-                        String type = select.getOption(select.getSelectedIndex()).getValue();
+                        String type = select.getOption(select.getSelectedIndex()).getText();
                         input = new HtmlInputText(tpage, "input_show_epsnum");
                         int epsnum = Integer.parseInt(input.getValue());
                         input = new HtmlInputText(tpage, "input_show_img");
                         String img = input.getValue();
                         DbShow newShow = new DbShow(show.getId(), title, malid, status, type, epsnum, img);
+
+                        //tpage.showMessageDialog("type = " + select.getOption(select.getSelectedIndex()).getText() + " index = " + select.getSelectedIndex());
 
                         EmbeddedDBConnector db = new EmbeddedDBConnector();
                         if(! db.updateShowDetails(newShow, false))
@@ -294,11 +297,24 @@ public class ShowEditorDiv extends HtmlDiv
                             {
                                 db.updateShowDetails(newShow, true);
                                 db.mergeShowData(newShow);
+
                             }
                         }
                     } finally {
                         this.setDisabled(false);
+                        tpage.navigate(tpage.getCurrentPath());
                     }
+                } catch (Jaxception jaxception) {
+                    jaxception.printStackTrace();
+                }
+            }
+        };
+        HtmlInputButton close = new HtmlInputButton(tpage, "ShowEditClose")
+        {
+            public void onClick()
+            {
+                try {
+                    tpage.navigate(tpage.getCurrentPath());
                 } catch (Jaxception jaxception) {
                     jaxception.printStackTrace();
                 }

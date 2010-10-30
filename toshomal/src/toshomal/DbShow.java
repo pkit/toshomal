@@ -179,8 +179,8 @@ public class DbShow {
         return String.format("%d", malid);
     }
 
-    public void setId(int id)
+/*    public void setId(int id)
     {
         this.id = id;
-    }
+    }*/
 }
