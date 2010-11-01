@@ -314,7 +314,8 @@ public class ShowEditorDiv extends HtmlDiv
             public void onClick()
             {
                 try {
-                    tpage.navigate(tpage.getCurrentPath());
+                    this.deleteElement();
+                    //tpage.navigate(tpage.getCurrentPath());
                 } catch (Jaxception jaxception) {
                     jaxception.printStackTrace();
                 }

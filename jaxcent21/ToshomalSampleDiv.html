@@ -6,6 +6,7 @@
 
     <title>Toshomal Sample</title>
     <script type="text/javascript" src="ToshomalSample_files/jaxcent21.js"></script>
+    <script type="text/javascript" src="ToshomalSample_files/zxcbanimator.js"></script>
     <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdn.myanimelist.net/js/hover.v4.js"></script>
 
@@ -25,7 +26,7 @@
 <body>
 <div id="myanimelist" class="table_head">
 <div class="table_newrow">&nbsp;</div>
-<div style="width: 100%;">
+<div id="toprow" style="width: 100%; position: relative; z-index: 1; background: #ffffff;">
     <div id="simg8476"class="cell_img">
         <div class="picSurround"><a href="http://myanimelist.net/anime/8476/">
             <img src="ToshomalSample_files/26844t.jpg" border="0"></a>
@@ -92,10 +93,10 @@
             <a href="aaaa" style="font-size:0.7em">XviD 704x400</a>
         </div>
     </div>
-    <div class="borderClass" style="clear: both;"></div>
+    <div class="borderClass" style="clear: both; background: #ffffff;"></div>
 </div>
-<div class="table_newrow">&nbsp;</div>
-<div style="width: 100%;">
+<div class="table_newrow" style="background: #ffffff;">&nbsp;</div>
+<div style="width: 100%; position: relative; z-index: 1; background: #ffffff;">
     <div class="cell_img">
         <div class="picSurround"><a href="http://myanimelist.net/anime/8476/">
             <img src="ToshomalSample_files/26844t.jpg" border="0"></a>
@@ -103,6 +104,7 @@
     </div>
     <div class="cell_desc">
         <div><a href="http://myanimelist.net/anime/8476/"><strong>Otome Youkai Zakuro</strong></a>
+            <a class="button_edit" href="javascript:void(0);" onclick="slideEditor();">edit</a>
             <div class="spaceit_pad">Currently Airing</div>
             <div class="lightLink">Updated: 2010-10-18 00:30:26.184</div>
             <div class="spaceit_pad">Episodes:
@@ -117,7 +119,7 @@
     </div>
     <div class="cell_tags">
         <div class="spaceit">
-            <a href="aaaa" style="font-size:0.8em">BATMAN</a>
+            <a href="aaaa" style="font-size:0.8em">ddddd</a>
             <a href="aaaa" style="font-size:1.5em">720p</a>
             <a href="aaaa" style="font-size:1.5em">HD</a>
             <a href="aaaa" style="font-size:0.7em">Ayako</a>
@@ -134,249 +136,85 @@
             <a href="aaaa" style="font-size:0.7em">XviD 704x400</a>
         </div>
     </div>
-    <div class="borderClass" style="clear: both;"></div>
+    <div class="borderClass" style="clear: both; background: #ffffff;"></div>
 </div>
-<div style="width: 100%;">
-<!--    <table id="dialog" cellpadding="0" cellspacing="0">
-        <tr>
-            <td>
-                <div class="normal_header" style="margin-top: 0; text-align: left;">Edit show Kami nomi zo Shiru Sekai</div>
-                <div style="text-align: left;"> -->
-                    <form method="post" name="EditShowForm" id="showForm" >
-                        <input type="hidden" name="show_id" value="25">
-                        <table class="light_bg" border="0" cellpadding="5" cellspacing="0" width="50%">
-                            <!--<tr>
-                                <td colspan="2" align="left">
-                                    <input type="button" id="ShowEditSubmit" class="inputButton" style="font-weight: bold; font-size: 12px;" value="Update & Close">
-                                </td>
-                            </tr>-->
-                            <tr>
-                                <td width="130" class="borderClass" valign="top">Anime Title</td>
-                                <td class="borderClass">
-                                    <input type="text" name="show_name" id="input_show_name" class="inputtext" value="Kami nomi zo Shiru Sekai" size="40">
-                                    <!--<input type="hidden" name="series_title" id="animeid" value="8525"/>
-                                    <input type="hidden" name="aeps" id="aeps" value="0" />
-                                    <input type="hidden" name="astatus" id="astatus" value="1" />
-                                    <input type="hidden" name="close_on_update" value="" />-->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">MAL ID</td>
-                                <td class="borderClass">
-                                    <input type="text" name="show_mal_id" id="input_mal_id" class="inputtext" value="3452" size="6">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Status</td>
-                                <td class="borderClass">
-                                    <select name="show_status" id="input_show_status" onchange="StatusBooleanCheck();" class="inputtext">
-                                        <option value="0" >Select status
-                                        <option value="1" selected>Currently Airing
-                                        <option value="2" >Finished Airing
-                                        <option value="3" >Not yet aired
-                                        <option value="4" >Unknown
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Type</td>
-                                <td class="borderClass">
-                                    <select name="show_type" id="input_show_type" onchange="StatusBooleanCheck();" class="inputtext">
-                                        <option value="0" >Select type
-                                        <option value="1" selected>TV
-                                        <option value="2" >Movie
-                                        <option value="3" >OVA
-                                        <option value="4" >Special
-                                        <option value="5" >Unknown
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass" valign="top">Number of Episodes</td>
-                                <td class="borderClass">
-                                    <input type="text" name="show_eps" id="input_show_epsnum" class="inputtext" value="13" size="3">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass" valign="center">Anime Image</td>
-                                <td class="borderClass">
-                                    <input type="text" name="show_img" id="input_show_img" class="inputtext" value="http://cdn.myanimelist.net/images/anime/12/26726t.jpg" size="55">
-                                    <div class="picSurround">
-                                        <img src="http://cdn.myanimelist.net/images/anime/12/26726t.jpg" border="0"></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass" valign="top">Search String</td>
-                                <td class="borderClass">
-                                    <input type="text" name="show_search" id="input_show_search" class="inputtext" value="Kami nomi zo Shiru Sekai" size="50">
-                                    <input type="button" id="ShowEditSearch" class="inputButton" value="Search">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" align="left">
-                                    <input type="button" id="ShowEditSubmitB" class="inputButton" style="font-weight: bold; font-size: 12px;" value="Update & Close">
-                                </td>
-                            </tr>
-                            <!--<tr>
-                                <td class="borderClass">Status</td>
-                                <td class="borderClass">
-                                    <select name="status" id="status" onchange="StatusBooleanCheck();" class="inputtext">
-                                        <option value="0">Select status
-                                        <option value="1" selected>Watching
-                                        <option value="2" >Completed
-                                        <option value="3" >On-Hold
-                                        <option value="6" >Plan to Watch
-                                        <option value="4" >Dropped
-                                    </select>
-                                    <span style="display: none;">
-                                        <span>
-                                            <label>
-                                                <input type="checkbox" name="rewatching" id="rewatchingBox" onclick="checkRewatching();" value="1" >
-                                                Re-watching
-                                            </label>
-                                        </span>
-                                        <input type="hidden" name="last_status" value="1" />
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass" valign="top">Episodes Watched</td>
-
-                                <td class="borderClass"><input type="text" name="completed_eps" id="completedEpsID" class="inputtext" value="3" size="3"> <a href="javascript:void(0);" onclick="incEpCount();">+</a> / <span id="totalEpisodes">?</span>
-                                    <input type="hidden" name="last_completed_eps" value="3" />
-                                    <a href="http://myanimelist.net/ajaxtb.php?keepThis=true&detailedaid=8525&TB_iframe=true&height=420&width=390" title="Episode Details" class="thickbox">Episode Details</a>            </td>
-                            </tr>
-                            <tr>
-
-                                <td class="borderClass">Your Score</td>
-                                <td class="borderClass"><select name="score" class="inputtext">
-                                    <option value="0.00">Select score<option  value="10">(10) Masterpiece<option  value="9">(9) Great<option  value="8">(8) Very Good<option selected value="7">(7) Good<option  value="6">(6) Fine<option  value="5">(5) Average<option  value="4">(4) Bad<option  value="3">(3) Very Bad<option  value="2">(2) Horrible<option  value="1">(1) Unwatchable			</select>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Tags</td>
-                                <td class="borderClass"><textarea name="tags" rows="2" id="tagtext" cols="45" class="textarea"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Start Date</td>
-
-                                <td class="borderClass">
-                                    Month:
-                                    <select name="startMonth" disabled class="inputtext">
-                                        <option value="00">
-                                        <option value="1" >Jan<option value="2" >Feb<option value="3" >Mar<option value="4" >Apr<option value="5" >May<option value="6" >Jun<option value="7" >Jul<option value="8" >Aug<option value="9" >Sep<option value="10" >Oct<option value="11" >Nov<option value="12" >Dec			</select>
-
-                                    Day:
-                                    <select name="startDay" disabled class="inputtext">
-                                        <option value="00">
-                                        <option value="1" >1<option value="2" >2<option value="3" >3<option value="4" >4<option value="5" >5<option value="6" >6<option value="7" >7<option value="8" >8<option value="9" >9<option value="10" >10<option value="11" >11<option value="12" >12<option value="13" >13<option value="14" >14<option value="15" >15<option value="16" >16<option value="17" >17<option value="18" >18<option value="19" >19<option value="20" >20<option value="21" >21<option value="22" >22<option value="23" >23<option value="24" >24<option value="25" >25<option value="26" >26<option value="27" >27<option value="28" >28<option value="29" >29<option value="30" >30<option value="31" >31			</select>
-
-                                    Year:
-                                    <select name="startYear" disabled class="inputtext">
-                                        <option value="0000">
-                                        <option value="2010" >2010<option value="2009" >2009<option value="2008" >2008<option value="2007" >2007<option value="2006" >2006<option value="2005" >2005<option value="2004" >2004<option value="2003" >2003<option value="2002" >2002<option value="2001" >2001<option value="2000" >2000<option value="1999" >1999<option value="1998" >1998<option value="1997" >1997<option value="1996" >1996<option value="1995" >1995<option value="1994" >1994<option value="1993" >1993<option value="1992" >1992<option value="1991" >1991<option value="1990" >1990<option value="1989" >1989<option value="1988" >1988<option value="1987" >1987<option value="1986" >1986<option value="1985" >1985<option value="1984" >1984<option value="1983" >1983<option value="1982" >1982<option value="1981" >1981<option value="1980" >1980			</select>
-
-                                    &nbsp;
-                                    <label><input type="checkbox" checked onchange="ChangeStartDate();"  name="unknownStart" value="1"> <small>Unknown Date</label><br>Start Date represents the date you started watching the Anime <a href="javascript:setToday(1);">Insert Today</a></small>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Finish Date</td>
-
-                                <td class="borderClass">
-                                    Month:
-                                    <select name="endMonth" class="inputtext" disabled>
-                                        <option value="00">
-                                        <option value="1" >Jan<option value="2" >Feb<option value="3" >Mar<option value="4" >Apr<option value="5" >May<option value="6" >Jun<option value="7" >Jul<option value="8" >Aug<option value="9" >Sep<option value="10" >Oct<option value="11" >Nov<option value="12" >Dec			</select>
-
-                                    Day:
-                                    <select name="endDay" class="inputtext" disabled>
-                                        <option value="00">
-                                        <option value="1" >1<option value="2" >2<option value="3" >3<option value="4" >4<option value="5" >5<option value="6" >6<option value="7" >7<option value="8" >8<option value="9" >9<option value="10" >10<option value="11" >11<option value="12" >12<option value="13" >13<option value="14" >14<option value="15" >15<option value="16" >16<option value="17" >17<option value="18" >18<option value="19" >19<option value="20" >20<option value="21" >21<option value="22" >22<option value="23" >23<option value="24" >24<option value="25" >25<option value="26" >26<option value="27" >27<option value="28" >28<option value="29" >29<option value="30" >30<option value="31" >31			</select>
-
-                                    Year:
-                                    <select name="endYear" class="inputtext" disabled>
-                                        <option value="0000">
-                                        <option value="2010" >2010<option value="2009" >2009<option value="2008" >2008<option value="2007" >2007<option value="2006" >2006<option value="2005" >2005<option value="2004" >2004<option value="2003" >2003<option value="2002" >2002<option value="2001" >2001<option value="2000" >2000<option value="1999" >1999<option value="1998" >1998<option value="1997" >1997<option value="1996" >1996<option value="1995" >1995<option value="1994" >1994<option value="1993" >1993<option value="1992" >1992<option value="1991" >1991<option value="1990" >1990<option value="1989" >1989<option value="1988" >1988<option value="1987" >1987<option value="1986" >1986<option value="1985" >1985<option value="1984" >1984<option value="1983" >1983<option value="1982" >1982<option value="1981" >1981<option value="1980" >1980			</select>
-
-                                    &nbsp;
-                                    <small><label><input type="checkbox" onchange="ChangeEndDate();" checked name="unknownEnd" value="1"> Unknown Date</label><br>Do <u>not</u> fill out the Finish Date unless status is <em>Completed</em> <a href="javascript:setToday(2);">Insert Today</a></small>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="borderClass">Fansub Group</td>
-                                <td class="borderClass"><input type="text" name="fansub_group" class="inputtext" value="0" size="50"></td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Priority</td>
-                                <td class="borderClass"><select name="priority" class="inputtext">
-                                    <option value="0" selected>Low<option value="1" >Medium<option value="2" >High			</select>
-
-                                    <div style="margin-top 3px;"><small>What is your priority level to watch this anime?</small></div></td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass" align="left" valign="top">Storage</td>
-                                <td class="borderClass" align="left"><select name="storage" id="storage" onchange="StorageBooleanCheck(2);" class="inputtext">
-                                    <option value="0">Select storage type
-                                    <option value="1" >Hard Drive<option value="6" >External HD<option value="7" >NAS<option value="2" >DVD / CD<option value="4" >Retail DVD<option value="5" >VHS<option value="3" >None			</select>
-                                    <div style="margin: 3px 0px; display: none;" id="StorageDiv">Total <span id="storageDescription">DvD's</span> <input type="text" name="storageVal" id="storageValue" value="0.00" size="4" class="inputtext"></div>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Total Episodes Downloaded</td>
-                                <td class="borderClass"><input type="text" name="list_downloaded_eps" id="epDownloaded" value="0" size="4" class="inputtext"> <a href="javascript:void(0);" onclick="incEpDownloadCount();">+</a> <small><a href="javascript:SetDownloadedEps();">Insert Series Eps</a></small></td>
-                            </tr>
-
-                            <tr>
-                                <td class="borderClass">Total Times<br>Re-watched Series</td>
-                                <td class="borderClass"><input type="text" name="list_times_watched" value="0" size="4" class="inputtext">
-                                    <small><a href="#" onclick="window.open('info.php?go=timeswatched','infoWindow','menubar=no,scrollbars=no,status=no,width=300,height=400');">More Info</a></small></td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Rewatch Value</td>
-
-                                <td class="borderClass"><select name="list_rewatch_value" class="inputtext">
-                                    <option value="0">Select rewatch value<option  value="1">Very Low<option  value="2">Low<option  value="3">Medium<option  value="4">High<option  value="5">Very High
-                                </select>
-                                    <small><a href="#" onclick="window.open('info.php?go=rewatchvalue','infoWindow3','menubar=no,scrollbars=no,status=no,width=300,height=200');">More Info</a></small></td>
-                            </tr>
-                            <tr>
-
-                                <td class="borderClass" valign="top">Comments</td>
-                                <td class="borderClass"><textarea name="list_comments" rows="5" cols="45" class="textarea"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="borderClass">Ask to Discuss?</td>
-                                <td class="borderClass">
-                                    <select name="discuss" class="inputtext">
-
-                                        <option value="1" selected>Ask to discuss an episode after you update your episode count?</option>
-                                        <option value="0" >Don't ask to discuss</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" align="center">
-                                    <input type="button" class="inputButton" style="font-weight: bold; font-size: 14px;" onclick="checkValidSubmit(2)" value="Update Entry">
-
-                                    &nbsp;
-                                    <input type="button" class="inputButton" value="Delete" onclick="checkValidSubmit(3)">
-                                </td>
-                            </tr>-->
-                        </table>
-                        <input type="hidden" name="submitIt" value="0">
-                    </form>
-            <!--</td>
-        </tr>
-    </table> -->
-    <div class="borderClass" style="clear: both;"></div>
+<div id="EditorCont" style="width: 100%; position: relative; z-index: 0; background: #ffffff;">
+    <div id="EditorDiv" style="width: 100%; position: absolute; left: 0px; top: -410px; z-index: 0;">
+        <form method="post" name="EditShowForm" id="showForm" >
+            <input type="hidden" name="show_id" value="25">
+            <table class="light_bg" border="0" cellpadding="5" cellspacing="0" width="50%">
+                <tr>
+                    <td width="130" class="borderClass" valign="top">Anime Title</td>
+                    <td class="borderClass">
+                        <input type="text" name="show_name" id="input_show_name" class="inputtext" value="Kami nomi zo Shiru Sekai" size="40">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass">MAL ID</td>
+                    <td class="borderClass">
+                        <input type="text" name="show_mal_id" id="input_mal_id" class="inputtext" value="3452" size="6">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass">Status</td>
+                    <td class="borderClass">
+                        <select name="show_status" id="input_show_status" onchange="StatusBooleanCheck();" class="inputtext">
+                            <option value="0" >Select status
+                            <option value="1" selected>Currently Airing
+                            <option value="2" >Finished Airing
+                            <option value="3" >Not yet aired
+                            <option value="4" >Unknown
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass">Type</td>
+                    <td class="borderClass">
+                        <select name="show_type" id="input_show_type" onchange="StatusBooleanCheck();" class="inputtext">
+                            <option value="0" >Select type
+                            <option value="1" selected>TV
+                            <option value="2" >Movie
+                            <option value="3" >OVA
+                            <option value="4" >Special
+                            <option value="5" >Unknown
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass" valign="top">Number of Episodes</td>
+                    <td class="borderClass">
+                        <input type="text" name="show_eps" id="input_show_epsnum" class="inputtext" value="13" size="3">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass" valign="center">Anime Image</td>
+                    <td class="borderClass">
+                        <input type="text" name="show_img" id="input_show_img" class="inputtext" value="http://cdn.myanimelist.net/images/anime/12/26726t.jpg" size="55">
+                        <div class="picSurround">
+                            <img src="http://cdn.myanimelist.net/images/anime/12/26726t.jpg" border="0"></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="borderClass" valign="top">Search String</td>
+                    <td class="borderClass">
+                        <input type="text" name="show_search" id="input_show_search" class="inputtext" value="Kami nomi zo Shiru Sekai" size="50">
+                        <input type="button" id="ShowEditSearch" class="inputButton" value="Search">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="left">
+                        <input type="button" id="ShowEditSubmitB" class="inputButton" style="font-weight: bold; font-size: 12px;" value="Update & Close" onclick="slideEditor();">
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="submitIt" value="0">
+        </form>
+        <div class="borderClass" style="clear: both;"></div>
+    </div>
 </div>
-<div class="table_newrow">&nbsp;</div>
-<div style="width: 100%;">
+<div class="table_newrow"  style="background: #ffffff;">&nbsp;</div>
+<div style="width: 100%; position: relative; z-index: 1; background: #ffffff;">
     <div class="cell_img">
         <div class="picSurround"><a href="http://myanimelist.net/anime/8476/">
             <img src="ToshomalSample_files/26844t.jpg" border="0"></a>
